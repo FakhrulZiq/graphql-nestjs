@@ -1,6 +1,6 @@
 //why it throw error Cannot find module 'src/_mocks_/mockUsers' from 'graphql/resolvers/UserResolver.spec.ts'
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserResolver } from './UserResolver';
+import { UserResolver } from '../../Modules/users/UserResolver';
 import { mockUsers } from '../../mocks/mockUsers';
 import { mockUserSettings } from '../../mocks/mockUserSetting';
 
