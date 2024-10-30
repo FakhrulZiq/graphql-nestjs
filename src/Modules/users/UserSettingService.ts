@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserSetting } from '../../graphql/models/UserSettings';
-import { CreateUserSettingsInput } from 'src/graphql/dto/create-user-settings.input';
-import { User } from 'src/graphql/models/User';
-import { find } from 'rxjs';
+import { UserSetting } from '../../dataAccess/models/UserSettings';
+import { CreateUserSettingsInput } from 'src/dataAccess/dto/create-user-settings.input';
+import { User } from 'src/dataAccess/models/User';
+import { applicationError } from 'src/utilities/exceptionInstance';
 
 @Injectable()
 export class UserSettingService {
@@ -16,24 +16,35 @@ export class UserSettingService {
   ) {}
 
   getUserSettingById(userId: number) {
-    return this.userSetingRepository.findOneBy({ userId });
+    try {
+      return this.userSetingRepository.findOneBy({ userId });
+    } catch (error) {
+      throw applicationError(error);
+    }
   }
 
-  async createUserSetting(createUserSettingData: CreateUserSettingsInput) {
-    const user = await this.userRepository.findOneBy({
-      id: createUserSettingData.userId,
-    });
+  async createUserSetting(
+    createUserSettingData: CreateUserSettingsInput,
+  ): Promise<UserSetting> {
+    try {
+      const user = await this.userRepository.findOneBy({
+        id: createUserSettingData.userId,
+      });
 
-    if (!user) throw new Error('User Not Found');
+      if (!user) throw new Error('User Not Found');
 
-    const newUserSetting = this.userSetingRepository.create(
-      createUserSettingData,
-    );
-    const savedSettings = await this.userSetingRepository.save(newUserSetting);
+      const newUserSetting = this.userSetingRepository.create(
+        createUserSettingData,
+      );
+      const savedSettings =
+        await this.userSetingRepository.save(newUserSetting);
 
-    user.settings = savedSettings;
-    await this.userRepository.save(user);
+      user.settings = savedSettings;
+      await this.userRepository.save(user);
 
-    return user;
+      return savedSettings;
+    } catch (error) {
+      throw applicationError(error);
+    }
   }
 }

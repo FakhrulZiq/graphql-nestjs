@@ -7,4 +7,7 @@ export class CreateUserInput {
 
   @Field({ nullable: true })
   displayName: string;
+
+  @Field()
+  settingUserId: number;
 }

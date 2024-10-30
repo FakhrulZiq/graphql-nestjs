@@ -5,7 +5,7 @@
 type UserSetting {
   userId: Int!
   receiveNotification: Boolean!
-  recieveEmail: Boolean!
+  receiveEmail: Boolean!
 }
 
 type User {
@@ -28,10 +28,11 @@ type Mutation {
 input CreateUserInput {
   username: String!
   displayName: String
+  settingUserId: Float!
 }
 
 input CreateUserSettingsInput {
   userId: Int!
-  recieveNotifications: Boolean!
+  receiveNotifications: Boolean!
   receiveEmails: Boolean!
 }

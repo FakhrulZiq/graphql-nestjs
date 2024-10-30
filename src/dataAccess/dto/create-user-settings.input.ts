@@ -6,7 +6,7 @@ export class CreateUserSettingsInput {
   userId: number;
 
   @Field()
-  recieveNotifications: boolean;
+  receiveNotifications: boolean;
 
   @Field()
   receiveEmails: boolean;

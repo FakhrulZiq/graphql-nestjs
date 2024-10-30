@@ -8,11 +8,11 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { User } from '../../graphql/models/User';
+import { User } from '../../dataAccess/models/User';
 import { mockUsers } from '../../mocks/mockUsers';
-import { UserSetting } from '../../graphql/models/UserSettings';
+import { UserSetting } from '../../dataAccess/models/UserSettings';
 import { mockUserSettings } from '../../mocks/mockUserSetting';
-import { CreateUserInput } from 'src/graphql/dto/create-user.input';
+import { CreateUserInput } from 'src/dataAccess/dto/create-user.input';
 import { Inject } from '@nestjs/common';
 import { UserService } from './UserService';
 import { UserSettingService } from './UserSettingService';

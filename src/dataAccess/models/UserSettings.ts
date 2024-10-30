@@ -14,5 +14,5 @@ export class UserSetting {
 
   @Column({ default: false })
   @Field({ defaultValue: false })
-  recieveEmail: boolean;
+  receiveEmail: boolean;
 }

@@ -1,29 +1,21 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
-import { UserSettingsResolver } from './graphql/resolvers/UserSettingsResolver';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './graphql/models/User';
-import { UserSetting } from './graphql/models/UserSettings';
+import { DatabaseModule } from './dataAccess/database/database.module';
 import { UserModule } from './Modules/users/users.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      autoSchemaFile: join(process.cwd(), '/schema.gql'),
     }),
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'password',
-      database: 'nestGraphql',
-      entities: [User, UserSetting],
-      synchronize: true,
-    }),
+    DatabaseModule,
     UserModule,
   ],
 })
