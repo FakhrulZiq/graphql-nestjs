@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '../models/User';
-import { UserSetting } from '../models/UserSettings';
+import { BorrowerModel } from '../models/borrower.entity';
+import { InstallmentScheduleModel } from '../models/installmentSchedule.entity';
+import { LoanModel } from '../models/loan.entity';
+import { PaymentModel } from '../models/payment.entity';
 
 @Module({
   imports: [
@@ -14,7 +16,12 @@ import { UserSetting } from '../models/UserSettings';
         database: config.getOrThrow('MYSQL_NAME'),
         username: config.getOrThrow('MYSQL_USERNAME'),
         password: config.getOrThrow('MYSQL_PASSWORD'),
-        entities: [User, UserSetting],
+        entities: [
+          BorrowerModel,
+          InstallmentScheduleModel,
+          LoanModel,
+          PaymentModel,
+        ],
         autoLoadEntities: false,
         synchronize: true,
       }),
@@ -23,4 +30,3 @@ import { UserSetting } from '../models/UserSettings';
   ],
 })
 export class DatabaseModule {}
- 
