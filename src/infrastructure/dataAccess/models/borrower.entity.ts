@@ -15,7 +15,15 @@ export class BorrowerModel extends BaseModel {
   @Column({ type: 'varchar', length: 100, nullable: false })
   phoneNumber: string;
 
+  @Field()
+  @Column({ type: 'int', nullable: false })
+  loanAmount: number;
+
+  @Field()
+  @Column({ type: 'int', nullable: false })
+  totalInstallments: number;
+
   @Field(() => [LoanModel], { nullable: true })
   @OneToMany(() => LoanModel, (loan: LoanModel) => loan.borrower)
-  loans: LoanModel[];
+  loans?: LoanModel[];
 }

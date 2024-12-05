@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
+    "build": "rimraf dist && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -18,8 +18,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "generate:migration": "typeorm migration:generate -d ./dist/src/typeorm.config.js migrations/project",
-    "migration": "typeorm migration:run -d ./dist/src/typeorm.config.js",
+    "generate:migration": "npm run build && typeorm migration:generate -d ./dist/src/typeorm.config.js migrations/project",
+    "migration": "npm run build && typeorm migration:run -d ./dist/src/typeorm.config.js",
     "create:migration": "typeorm migration:create migrations/$npm_config_name",
     "revert:migration": "typeorm migration:revert -d ./dist/typeorm.config.js"
   },

@@ -2,37 +2,93 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type UserSetting {
-  userId: Int!
-  receiveNotification: Boolean!
-  receiveEmail: Boolean!
+type PaymentModel {
+  id: String!
+  auditCreatedDateTime: DateTime!
+  auditCreatedBy: String!
+  auditModifiedDateTime: DateTime
+  auditModifiedBy: String
+  auditDeletedDateTime: DateTime
+  auditDeletedBy: String
+  paymentAmount: Float!
+  paymentDate: String!
+  paymentMethod: String!
+  paymentStatus: String!
+  loan: LoanModel!
 }
 
-type User {
-  id: Int!
-  username: String!
-  displayName: String
-  settings: UserSetting
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type InstallmentScheduleModel {
+  id: String!
+  auditCreatedDateTime: DateTime!
+  auditCreatedBy: String!
+  auditModifiedDateTime: DateTime
+  auditModifiedBy: String
+  auditDeletedDateTime: DateTime
+  auditDeletedBy: String
+  installmentNumber: Float!
+  dueDate: String!
+  amountDue: Float!
+  status: String!
+  loan: LoanModel!
+}
+
+type LoanModel {
+  id: String!
+  auditCreatedDateTime: DateTime!
+  auditCreatedBy: String!
+  auditModifiedDateTime: DateTime
+  auditModifiedBy: String
+  auditDeletedDateTime: DateTime
+  auditDeletedBy: String
+  loanAmount: Float!
+  totalInstallments: Float!
+  outStandingAmount: Float!
+  loanStartDate: String!
+  loanStatus: String!
+  borrower: BorrowerModel!
+  payments: [PaymentModel!]
+  installmentSchedules: [InstallmentScheduleModel!]
+}
+
+type BorrowerModel {
+  id: String!
+  auditCreatedDateTime: DateTime!
+  auditCreatedBy: String!
+  auditModifiedDateTime: DateTime
+  auditModifiedBy: String
+  auditDeletedDateTime: DateTime
+  auditDeletedBy: String
+  name: String!
+  phoneNumber: String!
+  loanAmount: Float!
+  totalInstallments: Float!
+  loans: [LoanModel!]
+}
+
+type BorrowerResponseDto {
+  id: String!
+  name: String!
+  phoneNumber: String!
+  loanAmount: Float!
+  totalInstallments: Float!
 }
 
 type Query {
-  getUserById(id: Int!): User
-  getUsers: [User!]!
+  getBorrowers: [BorrowerResponseDto!]!
 }
 
 type Mutation {
-  createUser(createUserData: CreateUserInput!): User!
-  createUserSettings(createUserSettingsData: CreateUserSettingsInput!): UserSetting!
+  addBorrower(addBorrowerInput: AddBorrowerInput!): BorrowerModel!
 }
 
-input CreateUserInput {
-  username: String!
-  displayName: String
-  settingUserId: Float!
-}
-
-input CreateUserSettingsInput {
-  userId: Int!
-  receiveNotifications: Boolean!
-  receiveEmails: Boolean!
+input AddBorrowerInput {
+  name: String!
+  phoneNumber: String!
+  loanAmount: Float!
+  totalInstallments: Float!
 }

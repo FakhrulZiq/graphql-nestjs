@@ -13,7 +13,7 @@ import {
 export class BaseModel {
   @Field()
   @PrimaryGeneratedColumn('uuid')
-  _id?: string;
+  id?: string;
 
   @CreateDateColumn()
   @Field(() => GraphQLISODateTime)
