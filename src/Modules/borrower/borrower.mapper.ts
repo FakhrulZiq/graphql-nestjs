@@ -7,7 +7,7 @@ import { AuditMapper } from 'src/domain/audit/audit.mapper';
 @Injectable()
 export class BorrowerMapper implements IMapper<Borrower, BorrowerModel> {
   toPersistence(entity: Borrower): BorrowerModel {
-    const { name, phoneNumber, loanAmount, totalInstallments, audit } = entity;
+    const { name, phoneNumber, audit } = entity;
 
     const {
       auditCreatedBy,
@@ -22,8 +22,6 @@ export class BorrowerMapper implements IMapper<Borrower, BorrowerModel> {
       id: entity.id,
       name,
       phoneNumber,
-      loanAmount,
-      totalInstallments,
       auditCreatedBy,
       auditCreatedDateTime,
       auditDeletedBy,
@@ -35,14 +33,12 @@ export class BorrowerMapper implements IMapper<Borrower, BorrowerModel> {
   }
 
   toDomain(model: BorrowerModel): Borrower {
-    const { name, id, loanAmount, phoneNumber, totalInstallments } = model;
+    const { name, id, phoneNumber } = model;
 
     return Borrower.create(
       {
         name,
-        loanAmount,
         phoneNumber,
-        totalInstallments,
         audit: new AuditMapper().toDomain(model),
       },
       id,

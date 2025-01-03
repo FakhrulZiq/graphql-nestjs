@@ -8,20 +8,12 @@ import { LoanModel } from './loan.entity';
 @ObjectType()
 export class BorrowerModel extends BaseModel {
   @Field()
-  @Column({ type: 'varchar', length: 100, nullable: false })
+  @Column({ type: 'varchar', length: 100 })
   name: string;
 
   @Field()
-  @Column({ type: 'varchar', length: 100, nullable: false })
+  @Column({ type: 'varchar', length: 100})
   phoneNumber: string;
-
-  @Field()
-  @Column({ type: 'int', nullable: false })
-  loanAmount: number;
-
-  @Field()
-  @Column({ type: 'int', nullable: false })
-  totalInstallments: number;
 
   @Field(() => [LoanModel], { nullable: true })
   @OneToMany(() => LoanModel, (loan: LoanModel) => loan.borrower)

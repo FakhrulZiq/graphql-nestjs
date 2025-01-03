@@ -7,31 +7,32 @@ import {
 } from 'src/applications/interfaces/borrowerService.interface';
 import { BorrowerModel } from '../infrastructure/dataAccess/models/borrower.entity';
 import { Borrower } from 'src/Modules/borrower/borrower';
+import { AddBorrowerInput } from 'src/Modules/borrower/dto/borrowerInput.dto';
+import { BorrowerResponseDto } from 'src/Modules/borrower/dto/borrowerOutput.dto';
 
-@Resolver(() => BorrowerModel)
+@Resolver()
 export class BorrowerResolver {
   constructor(
     @Inject(TYPES.IBorrowerService)
     private readonly _borrowerService: IBorrowerService,
   ) {}
 
-  @Query(() => Borrower[])
+  @Query(() => [BorrowerResponseDto])
   async getBorrowers(): Promise<Borrower[]> {
     return await this._borrowerService.getBorrowerList();
   }
 
-  @Mutation(() => BorrowerModel)
+  @Mutation(() => BorrowerModel, { name: 'addBorrower' })
   async addBorrower(
-    @Args('name') name: string,
-    @Args('phoneNumber') phoneNumber: string,
-    @Args('loanAmount') loanAmount: number,
-    @Args('totalInstallments') totalInstallments: number,
+    @Args('addBorrowerInput') addBorrowerInput: AddBorrowerInput,
   ): Promise<BorrowerModel> {
+    const { name, phoneNumber, loanAmount, totalInstalments } =
+      addBorrowerInput;
     const input: IAddBorrowerInput = {
       name,
       phoneNumber,
       loanAmount,
-      totalInstallments,
+      totalInstalments,
     };
     return await this._borrowerService.addNewBorrower(input);
   }

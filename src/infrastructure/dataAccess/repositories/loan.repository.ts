@@ -1,31 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ILoanRepository } from 'src/applications/interfaces/loanRepository.interface';
+import { Loan } from 'src/Modules/Loan/Loan';
+import { LoanMapper } from 'src/Modules/Loan/Loan.mapper';
 import { Repository } from 'typeorm';
-import { LoanModel } from '../models/loan.entity';
-import { BorrowerModel } from '../models/borrower.entity';
+import { LoanModel } from '../models/Loan.entity';
+import { GenericSqlRepository } from './generic.repository';
 
 @Injectable()
-export class LoanRepository {
+export class LoanRepository
+  extends GenericSqlRepository<Loan, LoanModel>
+  implements ILoanRepository
+{
+  loanMapper: LoanMapper;
   constructor(
     @InjectRepository(LoanModel)
-    private readonly loanRepository: Repository<LoanModel>,
-  ) {}
-
-  async createAndSaveLoan(
-    borrower: BorrowerModel,
-    loanAmount: number,
-    totalInstallments: number,
-    loanStartDate: string,
-    loanStatus: string,
-  ): Promise<LoanModel> {
-    const newLoan = this.loanRepository.create({
-      borrower,
-      loanAmount,
-      totalInstallments,
-      outStandingAmount: loanAmount,
-      loanStartDate,
-      loanStatus,
-    });
-    return await this.loanRepository.save(newLoan);
+    repository: Repository<LoanModel>,
+    mapper: LoanMapper,
+  ) {
+    super(repository, mapper);
+    this.loanMapper = mapper;
   }
 }

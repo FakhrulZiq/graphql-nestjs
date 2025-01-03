@@ -12,5 +12,5 @@ export class AddBorrowerInput {
   loanAmount: number;
 
   @Field()
-  totalInstallments: number;
+  totalInstalments: number;
 }

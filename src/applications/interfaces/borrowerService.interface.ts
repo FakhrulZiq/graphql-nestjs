@@ -10,5 +10,5 @@ export interface IAddBorrowerInput {
   name: string;
   phoneNumber: string;
   loanAmount: number;
-  totalInstallments: number;
+  totalInstalments: number;
 }

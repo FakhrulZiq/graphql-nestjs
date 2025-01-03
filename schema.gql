@@ -10,8 +10,9 @@ type PaymentModel {
   auditModifiedBy: String
   auditDeletedDateTime: DateTime
   auditDeletedBy: String
+  loanId: String!
   paymentAmount: Float!
-  paymentDate: String!
+  paymentDate: DateTime!
   paymentMethod: String!
   paymentStatus: String!
   loan: LoanModel!
@@ -22,7 +23,7 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type InstallmentScheduleModel {
+type InstalmentScheduleModel {
   id: String!
   auditCreatedDateTime: DateTime!
   auditCreatedBy: String!
@@ -30,8 +31,9 @@ type InstallmentScheduleModel {
   auditModifiedBy: String
   auditDeletedDateTime: DateTime
   auditDeletedBy: String
-  installmentNumber: Float!
-  dueDate: String!
+  loanId: String!
+  instalmentNumber: Float!
+  dueDate: DateTime!
   amountDue: Float!
   status: String!
   loan: LoanModel!
@@ -45,14 +47,17 @@ type LoanModel {
   auditModifiedBy: String
   auditDeletedDateTime: DateTime
   auditDeletedBy: String
+  borrowerId: String!
   loanAmount: Float!
-  totalInstallments: Float!
+  totalInstalments: Float!
   outStandingAmount: Float!
-  loanStartDate: String!
+  loanStartDate: DateTime!
   loanStatus: String!
+  remark: String!
+  proofLink: String!
   borrower: BorrowerModel!
   payments: [PaymentModel!]
-  installmentSchedules: [InstallmentScheduleModel!]
+  instalmentSchedules: [InstalmentScheduleModel!]
 }
 
 type BorrowerModel {
@@ -65,8 +70,6 @@ type BorrowerModel {
   auditDeletedBy: String
   name: String!
   phoneNumber: String!
-  loanAmount: Float!
-  totalInstallments: Float!
   loans: [LoanModel!]
 }
 
@@ -74,8 +77,6 @@ type BorrowerResponseDto {
   id: String!
   name: String!
   phoneNumber: String!
-  loanAmount: Float!
-  totalInstallments: Float!
 }
 
 type Query {
@@ -90,5 +91,5 @@ input AddBorrowerInput {
   name: String!
   phoneNumber: String!
   loanAmount: Float!
-  totalInstallments: Float!
+  totalInstalments: Float!
 }
