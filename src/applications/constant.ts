@@ -3,6 +3,10 @@ export const TYPES = {
   IBorrowerService: 'IBorrowerService',
   IBorrowerRepository: 'IBorrowerRepository',
   IApplicationLogger: 'IApplicationLogger',
+  IInstalmentScheduleRepository: 'IInstalmentScheduleRepository',
+  IInstalmentScheduleService: 'IInstalmentScheduleService',
+  ILoanRepository: 'ILoanRepository',
+  ILoanService: 'ILoanService',
 };
 
 export const CRUD_ACTION = {
@@ -10,4 +14,8 @@ export const CRUD_ACTION = {
   retrieve: 'retrieve',
   update: 'update',
   delete: 'delete',
+};
+
+export const INSTALMENT_STATUS = {
+  pending: 'pending',
 };

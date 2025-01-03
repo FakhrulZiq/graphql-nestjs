@@ -10,10 +10,4 @@ export class BorrowerResponseDto {
 
   @Field()
   phoneNumber: string;
-
-  @Field()
-  loanAmount: number;
-
-  @Field()
-  totalInstallments: number;
 }

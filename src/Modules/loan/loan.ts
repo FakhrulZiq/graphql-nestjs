@@ -1,40 +1,41 @@
-// import { IExchangeHub } from 'src/application/interface/exchangeHub.interface';
-// import { Audit } from '../../audit/audit';
-// import { Entity } from '@domain/entity';
-// import { Result } from '@domain/result';
-// import { Borrower } from '../borrower/borrower';
+import { ILoan } from 'src/applications/interfaces/loan.interface';
+import { Audit } from 'src/domain/audit/audit';
+import { Entity } from 'src/domain/entity';
+import { Result } from 'src/domain/result';
+import { updateEntity } from 'src/utilities/utils';
+import { Borrower } from '../borrower/borrower';
 
-// export class ExchangeHub extends Entity implements IExchangeHub {
-//   private _loanAmount: number;
-//   private _totalInstallments: number;
-//   private _outStandingAmount: number;
-//   private _loanStartDate: string;
-//   private _loanStatus: string;
+export class Loan extends Entity implements ILoan {
+  loanAmount: number;
+  totalInstalments: number;
+  outStandingAmount: number;
+  loanStartDate: Date;
+  loanStatus: string;
+  remark?: string;
+  proofLink?: string;
+  borrowerId: string;
+  borrower?: Borrower;
+  audit: Audit;
 
-//   private _audit: Audit;
-//   constructor(id: string, props: IExchangeHub) {
-//     super(id);
-//     this.name = props.name;
-//     this._audit = props.audit;
-//   }
+  constructor(id: string, props: ILoan) {
+    super(id);
+    this.loanAmount = props.loanAmount;
+    this.totalInstalments = props.totalInstalments;
+    this.outStandingAmount = props.outStandingAmount;
+    this.loanStartDate = props.loanStartDate;
+    this.loanStatus = props.loanStatus;
+    this.remark = props.remark;
+    this.proofLink = props.proofLink;
+    this.borrowerId = props.borrowerId;
+    this.borrower = props.borrower;
+    this.audit = props.audit;
+  }
 
-//   get name(): string {
-//     return this._name;
-//   }
+  static create(props: ILoan, id?: string): Result<Loan> {
+    return Result.ok<Loan>(new Loan(id, props));
+  }
 
-//   set name(value: string) {
-//     this._name = value;
-//   }
-
-//   get audit(): Audit {
-//     return this._audit;
-//   }
-
-//   set audit(value: Audit) {
-//     this._audit = value;
-//   }
-
-//   static create(props: IExchangeHub, id?: string): Result<ExchangeHub> {
-//     return Result.ok<ExchangeHub>(new ExchangeHub(id, props));
-//   }
-// }
+  static update(props: Partial<ILoan>, loan: Loan, audit: Audit): Loan {
+    return updateEntity(props, loan, audit);
+  }
+}

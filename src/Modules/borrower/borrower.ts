@@ -7,16 +7,12 @@ import { updateEntity } from 'src/utilities/utils';
 export class Borrower extends Entity implements IBorrower {
   name: string;
   phoneNumber: string;
-  loanAmount: number;
-  totalInstallments: number;
   audit: Audit;
 
   constructor(id: string, props: IBorrower) {
     super(id);
     this.name = props.name;
     this.phoneNumber = props.phoneNumber;
-    this.loanAmount = props.loanAmount;
-    this.totalInstallments = props.totalInstallments;
     this.audit = props.audit;
   }
 

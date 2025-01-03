@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BorrowerModel } from '../models/borrower.entity';
-import { InstallmentScheduleModel } from '../models/installmentSchedule.entity';
+import { InstalmentScheduleModel } from '../models/instalmentSchedule.entity';
 import { LoanModel } from '../models/loan.entity';
 import { PaymentModel } from '../models/payment.entity';
 
@@ -18,7 +18,7 @@ import { PaymentModel } from '../models/payment.entity';
         password: config.getOrThrow('MYSQL_PASSWORD'),
         entities: [
           BorrowerModel,
-          InstallmentScheduleModel,
+          InstalmentScheduleModel,
           LoanModel,
           PaymentModel,
         ],

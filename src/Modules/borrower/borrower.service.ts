@@ -7,24 +7,30 @@ import {
   IBorrowerService,
 } from 'src/applications/interfaces/borrowerService.interface';
 import { BorrowerModel } from 'src/infrastructure/dataAccess/models/borrower.entity';
-import { LoanRepository } from 'src/infrastructure/dataAccess/repositories/loan.repository';
 import { Audit } from 'src/domain/audit/audit';
 import { applicationError } from 'src/utilities/exceptionInstance';
 import { Borrower } from './borrower';
 import { IContextAwareLogger } from 'src/infrastructure/logger';
+import { IInstalmentScheduleService } from 'src/applications/interfaces/instalmentScheduleService.interface';
+import { ILoanService } from 'src/applications/interfaces/loanService';
 
 @Injectable()
 export class BorrowerService implements IBorrowerService {
   constructor(
     @Inject(TYPES.IBorrowerRepository)
     private readonly _borrowerRepository: IBorrowerRepository,
+    @Inject(TYPES.IInstalmentScheduleService)
+    private readonly _instalmentScheduleService: IInstalmentScheduleService,
+    @Inject(TYPES.ILoanService)
+    private readonly _loanService: ILoanService,
     @Inject(TYPES.IApplicationLogger)
     private readonly _logger: IContextAwareLogger,
-    private readonly _loanRepository: LoanRepository,
   ) {}
 
   async addNewBorrower(input: IAddBorrowerInput): Promise<BorrowerModel> {
     try {
+      const { name, phoneNumber, loanAmount, totalInstalments } = input;
+
       const auditProps: IAudit = Audit.createAuditProperties(
         input.name,
         CRUD_ACTION.create,
@@ -32,7 +38,8 @@ export class BorrowerService implements IBorrowerService {
       const audit: Audit = Audit.create(auditProps).getValue();
 
       const savedBorrower = Borrower.create({
-        ...input,
+        name,
+        phoneNumber,
         audit,
       }).getValue();
 
@@ -46,9 +53,22 @@ export class BorrowerService implements IBorrowerService {
         );
       }
 
+      const loanId = await this._loanService.addLoanDetail(
+        loanAmount,
+        totalInstalments,
+        savedData.id,
+      );
+
+      await this._instalmentScheduleService.addInstalmentSchedule(
+        loanAmount,
+        totalInstalments,
+        loanId,
+      );
+
       return savedData;
     } catch (error) {
-      throw applicationError(error);
+      this._logger.error(error.message, error);
+      throw error;
     }
   }
 
