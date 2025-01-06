@@ -12,7 +12,7 @@ import { applicationError } from 'src/utilities/exceptionInstance';
 import { Borrower } from './borrower';
 import { IContextAwareLogger } from 'src/infrastructure/logger';
 import { IInstalmentScheduleService } from 'src/applications/interfaces/instalmentScheduleService.interface';
-import { ILoanService } from 'src/applications/interfaces/loanService';
+import { ILoanService } from 'src/applications/interfaces/loanService.interface';
 
 @Injectable()
 export class BorrowerService implements IBorrowerService {
@@ -66,16 +66,6 @@ export class BorrowerService implements IBorrowerService {
       );
 
       return savedData;
-    } catch (error) {
-      this._logger.error(error.message, error);
-      throw error;
-    }
-  }
-
-  async getBorrowerList(): Promise<Borrower[]> {
-    try {
-      const borrower = await this._borrowerRepository.getAllBorrowerList();
-      return borrower;
     } catch (error) {
       this._logger.error(error.message, error);
       throw error;

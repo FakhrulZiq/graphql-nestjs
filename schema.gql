@@ -73,14 +73,19 @@ type BorrowerModel {
   loans: [LoanModel!]
 }
 
-type BorrowerResponseDto {
+type LoanResponseDto {
   id: String!
   name: String!
   phoneNumber: String!
+  loanAmount: String!
+  totalInstalments: String!
+  outStandingAmount: String!
+  loanStartDate: String!
+  loanStatus: String!
 }
 
 type Query {
-  getBorrowers: [BorrowerResponseDto!]!
+  getLoanList: [LoanResponseDto!]!
 }
 
 type Mutation {

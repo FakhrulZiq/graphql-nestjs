@@ -22,3 +22,8 @@ export const updateEntity = (
   data.audit = audit;
   return data;
 };
+
+export const extractDateFromISOString = (ISODate: Date): string => {
+  const date = new Date(ISODate);
+  return date.toISOString().split('T')[0];
+};

@@ -6,11 +6,15 @@ import {
 } from 'src/applications/constant';
 import { IAudit } from 'src/applications/interfaces/audit.interface';
 import { ILoanRepository } from 'src/applications/interfaces/LoanRepository.interface';
-import { ILoanService } from 'src/applications/interfaces/loanService';
+import {
+  ILoanListResponse,
+  ILoanService,
+} from 'src/applications/interfaces/loanService.interface';
 import { Audit } from 'src/domain/audit/audit';
 import { IContextAwareLogger } from 'src/infrastructure/logger';
-import { Loan } from './Loan';
 import { applicationError } from 'src/utilities/exceptionInstance';
+import { Loan } from './Loan';
+import { LoanParser } from './loan.parser';
 
 @Injectable()
 export class LoanService implements ILoanService {
@@ -51,6 +55,19 @@ export class LoanService implements ILoanService {
         throw applicationError(`Unable to create loan`);
       }
       return savedData.id;
+    } catch (error) {
+      this._logger.error(error.message, error);
+      throw error;
+    }
+  }
+
+  async getLoanList(): Promise<ILoanListResponse[]> {
+    try {
+      const loan: Loan[] = await this._loanRepository.findAll();
+
+      const partsedLoan: ILoanListResponse[] = LoanParser.loanParser(loan);
+
+      return partsedLoan;
     } catch (error) {
       this._logger.error(error.message, error);
       throw error;

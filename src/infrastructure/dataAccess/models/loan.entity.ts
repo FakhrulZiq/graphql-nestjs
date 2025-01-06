@@ -43,7 +43,7 @@ export class LoanModel extends BaseModel {
 
   @Field(() => BorrowerModel)
   @JoinColumn({ name: 'borrowerId', referencedColumnName: 'id' })
-  @ManyToOne(() => BorrowerModel, (borrower) => borrower.loans)
+  @ManyToOne(() => BorrowerModel, (borrower) => borrower.loans, { eager: true })
   borrower?: BorrowerModel;
 
   @Field(() => [PaymentModel], { nullable: true })
