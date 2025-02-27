@@ -12,7 +12,7 @@ export class BorrowerModel extends BaseModel {
   name: string;
 
   @Field()
-  @Column({ type: 'varchar', length: 100})
+  @Column({ type: 'varchar', length: 100 })
   phoneNumber: string;
 
   @Field(() => [LoanModel], { nullable: true })

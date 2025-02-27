@@ -1,5 +1,6 @@
 import { Audit } from 'src/domain/audit/audit';
-import { Borrower } from 'src/Modules/borrower/borrower';
+import { InstalmentSchedule } from 'src/Modules/InstalmentSchedule/InstalmentSchedule';
+import { Payment } from 'src/Modules/payment/payment';
 
 export interface ILoan {
   loanAmount: number;
@@ -10,6 +11,7 @@ export interface ILoan {
   remark?: string;
   proofLink?: string;
   borrowerId: string;
-  borrower?: Borrower;
+  payments?: Payment[];
+  instalmentSchedules?: InstalmentSchedule[];
   audit: Audit;
 }

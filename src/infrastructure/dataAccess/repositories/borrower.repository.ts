@@ -29,10 +29,49 @@ export class BorrowerRepository
   async getAllBorrowerList(): Promise<Borrower[]> {
     try {
       const borrowers: BorrowerModel[] = await this.repository.find();
-      const response = borrowers.map((borrower: BorrowerModel) =>
+
+      if (borrowers?.length === 0) {
+        return null;
+      }
+
+      return borrowers.map((borrower: BorrowerModel) =>
         this.borrowerMapper.toDomain(borrower),
       );
-      return response;
+    } catch (error) {
+      this._logger.error(error.message, error);
+      throw error;
+    }
+  }
+
+  async getBorrowerLoanDetails(phoneNumber: string): Promise<Borrower> {
+    try {
+      const borrower: BorrowerModel = await this.repository.findOne({
+        where: { phoneNumber },
+        relations: ['loans', 'loans.instalmentSchedules', 'loans.payments'],
+      });
+
+      if (!borrower) {
+        return null;
+      }
+
+      return this.borrowerMapper.toDomain(borrower);
+    } catch (error) {
+      this._logger.error(error.message, error);
+      throw error;
+    }
+  }
+
+  async getBorrowerById(id: string): Promise<Borrower> {
+    try {
+      const borrower: BorrowerModel = await this.repository.findOne({
+        where: { id },
+      });
+
+      if (!borrower) {
+        return null;
+      }
+
+      return this.borrowerMapper.toDomain(borrower);
     } catch (error) {
       this._logger.error(error.message, error);
       throw error;

@@ -74,7 +74,6 @@ type BorrowerModel {
 }
 
 type LoanResponseDto {
-  id: String!
   name: String!
   phoneNumber: String!
   loanAmount: String!
@@ -84,8 +83,25 @@ type LoanResponseDto {
   loanStatus: String!
 }
 
+type InstalmentDto {
+  instalmentNumber: Float!
+  dueDate: String!
+  amountDue: Float!
+  status: String!
+}
+
+type TrackUserLoanResponseDto {
+  loanId: String!
+  loanAmount: Float!
+  outstandingAmount: Float!
+  currentMonthDue: Float!
+  carryOverAmount: Float!
+  instalments: [InstalmentDto!]!
+}
+
 type Query {
   getLoanList: [LoanResponseDto!]!
+  trackUserLoan: [TrackUserLoanResponseDto!]!
 }
 
 type Mutation {

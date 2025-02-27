@@ -1,3 +1,8 @@
+import { Audit } from 'src/domain/audit/audit';
+import { Borrower } from 'src/Modules/borrower/borrower';
+import { InstalmentSchedule } from 'src/Modules/InstalmentSchedule/InstalmentSchedule';
+import { Payment } from 'src/Modules/payment/payment';
+
 export interface ILoanService {
   addLoanDetail(
     loanAmount: number,
@@ -8,7 +13,6 @@ export interface ILoanService {
 }
 
 export interface ILoanListResponse {
-  id: string;
   name: string;
   phoneNumber: string;
   loanAmount: number;
@@ -16,4 +20,19 @@ export interface ILoanListResponse {
   outStandingAmount: number;
   loanStartDate: string;
   loanStatus: string;
+}
+
+export interface ILoanWithBorrower {
+  borrower: Borrower;
+  loanAmount: number;
+  totalInstalments: number;
+  outStandingAmount: number;
+  loanStartDate: Date;
+  loanStatus: string;
+  remark?: string;
+  proofLink?: string;
+  borrowerId: string;
+  payments?: Payment[];
+  instalmentSchedules?: InstalmentSchedule[];
+  audit: Audit;
 }

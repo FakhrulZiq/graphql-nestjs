@@ -9,12 +9,15 @@ import { ILoanRepository } from 'src/applications/interfaces/LoanRepository.inte
 import {
   ILoanListResponse,
   ILoanService,
+  ILoanWithBorrower,
 } from 'src/applications/interfaces/loanService.interface';
 import { Audit } from 'src/domain/audit/audit';
 import { IContextAwareLogger } from 'src/infrastructure/logger';
 import { applicationError } from 'src/utilities/exceptionInstance';
 import { Loan } from './Loan';
 import { LoanParser } from './loan.parser';
+import { Borrower } from '../borrower/borrower';
+import { IBorrowerRepository } from 'src/applications/interfaces/borrowerRepository.interface';
 
 @Injectable()
 export class LoanService implements ILoanService {
@@ -23,6 +26,8 @@ export class LoanService implements ILoanService {
     private readonly _logger: IContextAwareLogger,
     @Inject(TYPES.ILoanRepository)
     private readonly _loanRepository: ILoanRepository,
+    @Inject(TYPES.IBorrowerRepository)
+    private readonly _borrowerRepository: IBorrowerRepository,
   ) {}
 
   async addLoanDetail(
@@ -63,9 +68,19 @@ export class LoanService implements ILoanService {
 
   async getLoanList(): Promise<ILoanListResponse[]> {
     try {
-      const loan: Loan[] = await this._loanRepository.findAll();
-
-      const partsedLoan: ILoanListResponse[] = LoanParser.loanParser(loan);
+      const loans: Loan[] = await this._loanRepository.findAll();
+      const loanWithBorrowers: ILoanWithBorrower[] = await Promise.all(
+        loans.map(async (loan) => {
+          const borrower: Borrower =
+            await this._borrowerRepository.getBorrowerById(loan.borrowerId);
+          return {
+            ...loan,
+            borrower,
+          };
+        }),
+      );
+      const partsedLoan: ILoanListResponse[] =
+        LoanParser.loanParser(loanWithBorrowers);
 
       return partsedLoan;
     } catch (error) {

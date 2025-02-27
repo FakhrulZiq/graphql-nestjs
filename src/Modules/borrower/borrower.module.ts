@@ -2,19 +2,20 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TYPES } from 'src/applications/constant';
 import { BorrowerModel } from 'src/infrastructure/dataAccess/models/borrower.entity';
+import { InstalmentScheduleModel } from 'src/infrastructure/dataAccess/models/instalmentSchedule.entity';
 import { LoanModel } from 'src/infrastructure/dataAccess/models/loan.entity';
 import { BorrowerRepository } from 'src/infrastructure/dataAccess/repositories/borrower.repository';
 import { InstalmentScheduleRepository } from 'src/infrastructure/dataAccess/repositories/instalmentSchedule.repository';
+import { LoanRepository } from 'src/infrastructure/dataAccess/repositories/loan.repository';
 import { ApplicationLogger } from 'src/infrastructure/logger';
-import { BorrowerResolver } from 'src/resolvers/borrower.resolver';
-import { InstalmentScheduleService } from '../instalmentSchedule/instalmentSchedule.service';
-import { BorrowerMapper } from './borrower.mapper';
-import { BorrowerService } from './borrower.service';
-import { InstalmentScheduleModel } from 'src/infrastructure/dataAccess/models/instalmentSchedule.entity';
 import { InstalmentScheduleMapper } from '../InstalmentSchedule/InstalmentSchedule.mapper';
+import { InstalmentScheduleService } from '../instalmentSchedule/instalmentSchedule.service';
 import { LoanMapper } from '../Loan/Loan.mapper';
 import { LoanService } from '../loan/loan.service';
-import { LoanRepository } from 'src/infrastructure/dataAccess/repositories/loan.repository';
+import { BorrowerMapper } from './borrower.mapper';
+import { BorrowerService } from './borrower.service';
+import { UoMeResolver } from 'src/resolver';
+import { PaymentMapper } from '../payment/payment.mapper';
 
 @Module({
   imports: [
@@ -53,7 +54,8 @@ import { LoanRepository } from 'src/infrastructure/dataAccess/repositories/loan.
     BorrowerMapper,
     InstalmentScheduleMapper,
     LoanMapper,
-    BorrowerResolver,
+    UoMeResolver,
+    PaymentMapper,
   ],
 })
 export class BorrowerModule {}

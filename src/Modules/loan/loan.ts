@@ -3,7 +3,8 @@ import { Audit } from 'src/domain/audit/audit';
 import { Entity } from 'src/domain/entity';
 import { Result } from 'src/domain/result';
 import { updateEntity } from 'src/utilities/utils';
-import { Borrower } from '../borrower/borrower';
+import { Payment } from '../payment/payment';
+import { InstalmentSchedule } from '../InstalmentSchedule/InstalmentSchedule';
 
 export class Loan extends Entity implements ILoan {
   loanAmount: number;
@@ -14,7 +15,8 @@ export class Loan extends Entity implements ILoan {
   remark?: string;
   proofLink?: string;
   borrowerId: string;
-  borrower?: Borrower;
+  payments?: Payment[];
+  instalmentSchedules?: InstalmentSchedule[];
   audit: Audit;
 
   constructor(id: string, props: ILoan) {
@@ -27,7 +29,8 @@ export class Loan extends Entity implements ILoan {
     this.remark = props.remark;
     this.proofLink = props.proofLink;
     this.borrowerId = props.borrowerId;
-    this.borrower = props.borrower;
+    this.payments = props.payments;
+    this.instalmentSchedules = props.instalmentSchedules;
     this.audit = props.audit;
   }
 

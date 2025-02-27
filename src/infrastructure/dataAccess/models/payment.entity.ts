@@ -30,5 +30,5 @@ export class PaymentModel extends BaseModel {
   @Field(() => LoanModel)
   @JoinColumn({ name: 'loanId', referencedColumnName: 'id' })
   @ManyToOne(() => LoanModel, (loan: LoanModel) => loan.payments)
-  loan: LoanModel;
+  loan?: LoanModel;
 }

@@ -3,7 +3,6 @@ import { Audit } from 'src/domain/audit/audit';
 import { Entity } from 'src/domain/entity';
 import { Result } from 'src/domain/result';
 import { updateEntity } from 'src/utilities/utils';
-import { Loan } from '../Loan/Loan';
 
 export class InstalmentSchedule extends Entity implements IInstalmentSchedule {
   instalmentNumber: number;
@@ -11,7 +10,6 @@ export class InstalmentSchedule extends Entity implements IInstalmentSchedule {
   amountDue: number;
   status: string;
   loanId: string;
-  loan: Loan;
   audit: Audit;
 
   constructor(id: string, props: IInstalmentSchedule) {
@@ -21,7 +19,6 @@ export class InstalmentSchedule extends Entity implements IInstalmentSchedule {
     this.amountDue = props.amountDue;
     this.status = props.status;
     this.loanId = props.loanId;
-    this.loan = props.loan;
     this.audit = props.audit;
   }
 
