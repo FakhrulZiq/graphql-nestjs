@@ -12,7 +12,7 @@ type PaymentModel {
   auditDeletedBy: String
   loanId: String!
   paymentAmount: Float!
-  paymentDate: DateTime!
+  paymentDate: String!
   paymentMethod: String!
   paymentStatus: String!
   loan: LoanModel!
@@ -33,7 +33,7 @@ type InstalmentScheduleModel {
   auditDeletedBy: String
   loanId: String!
   instalmentNumber: Float!
-  dueDate: DateTime!
+  dueDate: String!
   amountDue: Float!
   status: String!
   loan: LoanModel!
@@ -51,7 +51,7 @@ type LoanModel {
   loanAmount: Float!
   totalInstalments: Float!
   outStandingAmount: Float!
-  loanStartDate: DateTime!
+  loanStartDate: String!
   loanStatus: String!
   remark: String!
   proofLink: String!
@@ -73,16 +73,6 @@ type BorrowerModel {
   loans: [LoanModel!]
 }
 
-type LoanResponseDto {
-  name: String!
-  phoneNumber: String!
-  loanAmount: String!
-  totalInstalments: String!
-  outStandingAmount: String!
-  loanStartDate: String!
-  loanStatus: String!
-}
-
 type InstalmentDto {
   instalmentNumber: Float!
   dueDate: String!
@@ -91,21 +81,45 @@ type InstalmentDto {
 }
 
 type TrackUserLoanResponseDto {
-  loanId: String!
-  loanAmount: Float!
-  outstandingAmount: Float!
-  currentMonthDue: Float!
+  loanAmount: String!
+  outstandingAmount: String!
+  currentMonthDue: String!
   carryOverAmount: Float!
   instalments: [InstalmentDto!]!
 }
 
+type NewBorrowerResponseDto {
+  id: String!
+  name: String!
+  phoneNumber: String!
+}
+
+type LoanListDto {
+  loanAmount: Float!
+  loanStartDate: String!
+  loanStatus: String!
+  totalInstalments: Float!
+  outStandingAmount: Float!
+  remark: String
+}
+
+type BorrowerListResponseDto {
+  name: String!
+  phoneNumber: String!
+  loans: [LoanListDto!]!
+}
+
 type Query {
-  getLoanList: [LoanResponseDto!]!
-  trackUserLoan: [TrackUserLoanResponseDto!]!
+  getBorrowerList: [BorrowerListResponseDto!]!
+  trackUserLoan(trackUserLoanInput: TrackUserLoanInput!): TrackUserLoanResponseDto!
+}
+
+input TrackUserLoanInput {
+  phoneNumber: String!
 }
 
 type Mutation {
-  addBorrower(addBorrowerInput: AddBorrowerInput!): BorrowerModel!
+  addBorrower(addBorrowerInput: AddBorrowerInput!): NewBorrowerResponseDto!
 }
 
 input AddBorrowerInput {
@@ -113,4 +127,6 @@ input AddBorrowerInput {
   phoneNumber: String!
   loanAmount: Float!
   totalInstalments: Float!
+  remark: String!
+  proofLink: String
 }

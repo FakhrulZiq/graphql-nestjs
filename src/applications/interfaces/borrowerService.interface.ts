@@ -1,9 +1,9 @@
-import { BorrowerModel } from 'src/infrastructure/dataAccess/models/borrower.entity';
 import { InstalmentSchedule } from 'src/Modules/InstalmentSchedule/InstalmentSchedule';
 
 export interface IBorrowerService {
-  addNewBorrower(input: IAddBorrowerInput): Promise<BorrowerModel>;
-  trackUserLoan(phoneNumber: string): Promise<ITrackUserLoan[]>;
+  addNewBorrower(input: IAddBorrowerInput): Promise<INewBorrowerResponse>;
+  trackUserLoan(phoneNumber: string): Promise<ITrackUserLoan>;
+  getBorrwerList(): Promise<IBorrowerList[]>;
 }
 
 export interface IAddBorrowerInput {
@@ -11,22 +11,22 @@ export interface IAddBorrowerInput {
   phoneNumber: string;
   loanAmount: number;
   totalInstalments: number;
+  remark: string;
+  proofLink?: string;
 }
 
 export interface ITrackUserLoan {
-  loanId: string;
-  loanAmount: number;
-  outstandingAmount: number;
-  currentMonthDue: number;
+  loanAmount: string;
+  outstandingAmount: string;
+  currentMonthDue: string;
   carryOverAmount: number;
   instalments: IInstalmentSchedule[];
 }
 
 export interface ICalculatedLoanDetails {
-  loanId: string;
-  loanAmount: number;
-  outstandingAmount: number;
-  currentMonthDue: number;
+  loanAmount: string;
+  outstandingAmount: string;
+  currentMonthDue: string;
   carryOverAmount: number;
   instalments: InstalmentSchedule[];
 }
@@ -36,5 +36,25 @@ export interface IInstalmentSchedule {
   dueDate: string;
   amountDue: number;
   status: string;
-  loanId: string;
+}
+
+export interface INewBorrowerResponse {
+  id: string;
+  name: string;
+  phoneNumber: string;
+}
+
+interface ILoanList {
+  loanAmount: number;
+  loanStartDate: string;
+  loanStatus: string;
+  totalInstalments: number;
+  outStandingAmount: number;
+  remark: string;
+}
+
+export interface IBorrowerList {
+  name: string;
+  phoneNumber: string;
+  loans: ILoanList[];
 }

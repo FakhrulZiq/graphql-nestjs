@@ -17,7 +17,7 @@ export class PaymentModel extends BaseModel {
 
   @Field()
   @Column({ type: 'varchar', length: 100 })
-  paymentDate: Date;
+  paymentDate: string;
 
   @Field()
   @Column({ type: 'varchar', length: 100 })

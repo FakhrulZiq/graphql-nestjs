@@ -7,7 +7,7 @@ import { updateEntity } from 'src/utilities/utils';
 export class Payment extends Entity implements IPayment {
   loanId: string;
   paymentAmount: number;
-  paymentDate: Date;
+  paymentDate: string;
   paymentMethod: string;
   paymentStatus: string;
   audit: Audit;

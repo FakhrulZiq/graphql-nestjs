@@ -2,7 +2,7 @@ import { Audit } from 'src/domain/audit/audit';
 
 export interface IInstalmentSchedule {
   instalmentNumber: number;
-  dueDate: Date;
+  dueDate: string;
   amountDue: number;
   status: string;
   loanId: string;

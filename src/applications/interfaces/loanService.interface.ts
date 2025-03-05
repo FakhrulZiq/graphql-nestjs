@@ -8,6 +8,8 @@ export interface ILoanService {
     loanAmount: number,
     totalInstalments: number,
     borrowerId: string,
+    remark: string,
+    proofLink: string,
   ): Promise<string>;
   getLoanList(): Promise<ILoanListResponse[]>;
 }
@@ -27,7 +29,7 @@ export interface ILoanWithBorrower {
   loanAmount: number;
   totalInstalments: number;
   outStandingAmount: number;
-  loanStartDate: Date;
+  loanStartDate: string;
   loanStatus: string;
   remark?: string;
   proofLink?: string;

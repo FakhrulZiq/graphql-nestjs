@@ -34,9 +34,11 @@ export class LoanService implements ILoanService {
     loanAmount: number,
     totalInstalments: number,
     borrowerId: string,
+    remark: string,
+    proofLink: string,
   ): Promise<string> {
     try {
-      const currentDate = new Date();
+      const currentDate = new Date().toISOString();
 
       const auditProps: IAudit = Audit.createAuditProperties(
         'Fakhrul',
@@ -50,6 +52,8 @@ export class LoanService implements ILoanService {
         outStandingAmount: loanAmount,
         loanStartDate: currentDate,
         loanStatus: INSTALMENT_STATUS.pending,
+        remark,
+        proofLink,
         borrowerId,
         audit,
       }).getValue();

@@ -54,9 +54,11 @@ export class InstalmentScheduleService implements IInstalmentScheduleService {
     }
   }
 
-  private async _calculateDueDates(totalInstallments: number): Promise<Date[]> {
+  private async _calculateDueDates(
+    totalInstallments: number,
+  ): Promise<string[]> {
     try {
-      const dueDates: Date[] = [];
+      const dueDates: string[] = [];
       const currentDate = new Date();
       const currentDay = currentDate.getDate();
 
@@ -67,7 +69,7 @@ export class InstalmentScheduleService implements IInstalmentScheduleService {
           currentDate.getMonth() + monthOffset,
           10,
         );
-        dueDates.push(dueDate);
+        dueDates.push(dueDate.toISOString());
         monthOffset++;
       }
 
@@ -82,6 +84,7 @@ export class InstalmentScheduleService implements IInstalmentScheduleService {
     loanAmount: number,
     totalInstallments: number,
     loanId: string,
+    name: string,
   ): Promise<void> {
     try {
       const installments = await this._calculateInstallmentPerMonth(
@@ -90,7 +93,7 @@ export class InstalmentScheduleService implements IInstalmentScheduleService {
       );
 
       for (const installment of installments) {
-        await this._saveSingleInstallment(installment, loanId);
+        await this._saveSingleInstallment(installment, loanId, name);
       }
     } catch (error) {
       this._logger.error(error.message, error);
@@ -101,12 +104,13 @@ export class InstalmentScheduleService implements IInstalmentScheduleService {
   private async _saveSingleInstallment(
     instalment: ITotalPayPerMonth,
     loanId: string,
+    name: string,
   ): Promise<void> {
     try {
       const { instalmentNumber, dueDate, amountDue } = instalment;
 
       const auditProps: IAudit = Audit.createAuditProperties(
-        'Fakrhul',
+        name,
         CRUD_ACTION.create,
       );
       const audit: Audit = Audit.create(auditProps).getValue();
@@ -115,7 +119,7 @@ export class InstalmentScheduleService implements IInstalmentScheduleService {
         instalmentNumber,
         dueDate,
         amountDue,
-        status: INSTALMENT_STATUS.pending,
+        status: INSTALMENT_STATUS.upcoming,
         loanId,
         audit,
       };

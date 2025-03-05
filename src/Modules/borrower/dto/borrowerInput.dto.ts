@@ -13,4 +13,16 @@ export class AddBorrowerInput {
 
   @Field()
   totalInstalments: number;
+
+  @Field()
+  remark: string;
+
+  @Field({ nullable: true })
+  proofLink?: string;
+}
+
+@InputType()
+export class TrackUserLoanInput {
+  @Field()
+  phoneNumber: string;
 }

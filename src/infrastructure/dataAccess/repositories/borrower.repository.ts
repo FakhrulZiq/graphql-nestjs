@@ -28,7 +28,9 @@ export class BorrowerRepository
 
   async getAllBorrowerList(): Promise<Borrower[]> {
     try {
-      const borrowers: BorrowerModel[] = await this.repository.find();
+      const borrowers: BorrowerModel[] = await this.repository.find({
+        relations: ['loans', 'loans.instalmentSchedules', 'loans.payments'],
+      });
 
       if (borrowers?.length === 0) {
         return null;

@@ -17,7 +17,7 @@ export class InstalmentScheduleModel extends BaseModel {
 
   @Field()
   @Column({ type: 'varchar', length: 100 })
-  dueDate: Date;
+  dueDate: string;
 
   @Field()
   @Column({

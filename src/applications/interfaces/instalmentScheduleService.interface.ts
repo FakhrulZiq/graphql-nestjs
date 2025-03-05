@@ -3,11 +3,12 @@ export interface IInstalmentScheduleService {
     loanAmount: number,
     totalInstallments: number,
     loanId: string,
+    name: string,
   ): Promise<void>;
 }
 
 export interface ITotalPayPerMonth {
   instalmentNumber: number;
   amountDue: number;
-  dueDate: Date;
+  dueDate: string;
 }

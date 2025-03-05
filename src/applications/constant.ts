@@ -18,4 +18,9 @@ export const CRUD_ACTION = {
 
 export const INSTALMENT_STATUS = {
   pending: 'pending',
+  paid: 'paid',
+  unpaid: 'unpaid',
+  upcoming: 'upcoming',
 };
+
+export const AUDIT_BY_SYSTEM = 'System';

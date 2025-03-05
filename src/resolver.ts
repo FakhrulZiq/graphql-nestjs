@@ -2,18 +2,21 @@ import { Inject } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { TYPES } from 'src/applications/constant';
 import {
-  IAddBorrowerInput,
+  IBorrowerList,
   IBorrowerService,
+  INewBorrowerResponse,
   ITrackUserLoan,
 } from 'src/applications/interfaces/borrowerService.interface';
+import { ILoanService } from 'src/applications/interfaces/loanService.interface';
 import {
-  ILoanListResponse,
-  ILoanService,
-} from 'src/applications/interfaces/loanService.interface';
-import { AddBorrowerInput } from 'src/Modules/borrower/dto/borrowerInput.dto';
-import { LoanResponseDto } from 'src/Modules/loan/dto/loanOutput.dto';
-import { BorrowerModel } from './infrastructure/dataAccess/models/borrower.entity';
-import { TrackUserLoanResponseDto } from './Modules/borrower/dto/borrowerOutput.dto';
+  AddBorrowerInput,
+  TrackUserLoanInput,
+} from 'src/Modules/borrower/dto/borrowerInput.dto';
+import {
+  BorrowerListResponseDto,
+  NewBorrowerResponseDto,
+  TrackUserLoanResponseDto,
+} from './Modules/borrower/dto/borrowerOutput.dto';
 
 @Resolver()
 export class UoMeResolver {
@@ -24,30 +27,27 @@ export class UoMeResolver {
     private readonly _loanService: ILoanService,
   ) {}
 
-  @Query(() => [LoanResponseDto])
-  async getLoanList(): Promise<ILoanListResponse[]> {
-    return await this._loanService.getLoanList();
+  @Query(() => [BorrowerListResponseDto])
+  async getBorrowerList(): Promise<IBorrowerList[]> {
+    return await this._borrowerService.getBorrwerList();
   }
 
-  @Mutation(() => BorrowerModel)
+  @Mutation(() => NewBorrowerResponseDto)
   async addBorrower(
     @Args('addBorrowerInput') addBorrowerInput: AddBorrowerInput,
-  ): Promise<BorrowerModel> {
-    const { name, phoneNumber, loanAmount, totalInstalments } =
-      addBorrowerInput;
-    const input: IAddBorrowerInput = {
-      name,
-      phoneNumber,
-      loanAmount,
-      totalInstalments,
-    };
-    return await this._borrowerService.addNewBorrower(input);
+  ): Promise<INewBorrowerResponse> {
+    const newBorrower: INewBorrowerResponse =
+      await this._borrowerService.addNewBorrower(addBorrowerInput);
+    return newBorrower;
   }
 
-  @Query(() => [TrackUserLoanResponseDto])
-  async trackUserLoan(): Promise<ITrackUserLoan[]> {
-    const userLoan: ITrackUserLoan[] =
-      await this._borrowerService.trackUserLoan('011-87654345');
+  @Query(() => TrackUserLoanResponseDto)
+  async trackUserLoan(
+    @Args('trackUserLoanInput') trackUserLoanInput: TrackUserLoanInput,
+  ): Promise<ITrackUserLoan> {
+    const userLoan: ITrackUserLoan = await this._borrowerService.trackUserLoan(
+      trackUserLoanInput.phoneNumber,
+    );
     return userLoan;
   }
 }

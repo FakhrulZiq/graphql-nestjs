@@ -6,7 +6,7 @@ export interface ILoan {
   loanAmount: number;
   totalInstalments: number;
   outStandingAmount: number;
-  loanStartDate: Date;
+  loanStartDate: string;
   loanStatus: string;
   remark?: string;
   proofLink?: string;

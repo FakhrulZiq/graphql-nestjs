@@ -10,7 +10,7 @@ export class Loan extends Entity implements ILoan {
   loanAmount: number;
   totalInstalments: number;
   outStandingAmount: number;
-  loanStartDate: Date;
+  loanStartDate: string;
   loanStatus: string;
   remark?: string;
   proofLink?: string;

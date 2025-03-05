@@ -23,7 +23,7 @@ export const updateEntity = (
   return data;
 };
 
-export const extractDateFromISOString = (ISODate: Date): string => {
-  const date = new Date(ISODate);
-  return date.toISOString().split('T')[0];
+export const extractDateFromISOString = (ISODate: string): string => {
+  const [datePart] = ISODate.split(' ');
+  return datePart;
 };

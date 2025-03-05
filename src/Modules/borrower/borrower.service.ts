@@ -1,22 +1,28 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CRUD_ACTION, TYPES } from 'src/applications/constant';
+import {
+  AUDIT_BY_SYSTEM,
+  CRUD_ACTION,
+  INSTALMENT_STATUS,
+  TYPES,
+} from 'src/applications/constant';
 import { IAudit } from 'src/applications/interfaces/audit.interface';
 import { IBorrowerRepository } from 'src/applications/interfaces/borrowerRepository.interface';
 import {
   IAddBorrowerInput,
+  IBorrowerList,
   IBorrowerService,
   ICalculatedLoanDetails,
+  INewBorrowerResponse,
   ITrackUserLoan,
 } from 'src/applications/interfaces/borrowerService.interface';
+import { IInstalmentScheduleRepository } from 'src/applications/interfaces/instalmentScheduleRepository.interface';
 import { IInstalmentScheduleService } from 'src/applications/interfaces/instalmentScheduleService.interface';
 import { ILoanService } from 'src/applications/interfaces/loanService.interface';
 import { Audit } from 'src/domain/audit/audit';
-import { BorrowerModel } from 'src/infrastructure/dataAccess/models/borrower.entity';
 import { IContextAwareLogger } from 'src/infrastructure/logger';
 import { applicationError } from 'src/utilities/exceptionInstance';
 import { InstalmentSchedule } from '../InstalmentSchedule/InstalmentSchedule';
 import { Loan } from '../Loan/Loan';
-import { Payment } from '../payment/payment';
 import { Borrower } from './borrower';
 import { BorrowerParser } from './borrower.parser';
 
@@ -25,6 +31,8 @@ export class BorrowerService implements IBorrowerService {
   constructor(
     @Inject(TYPES.IBorrowerRepository)
     private readonly _borrowerRepository: IBorrowerRepository,
+    @Inject(TYPES.IInstalmentScheduleRepository)
+    private readonly _instalmentScheduleRepository: IInstalmentScheduleRepository,
     @Inject(TYPES.IInstalmentScheduleService)
     private readonly _instalmentScheduleService: IInstalmentScheduleService,
     @Inject(TYPES.ILoanService)
@@ -33,65 +41,102 @@ export class BorrowerService implements IBorrowerService {
     private readonly _logger: IContextAwareLogger,
   ) {}
 
-  async addNewBorrower(input: IAddBorrowerInput): Promise<BorrowerModel> {
+  async getBorrwerList(): Promise<IBorrowerList[]> {
     try {
-      const { name, phoneNumber, loanAmount, totalInstalments } = input;
+      const borrower: Borrower[] =
+        await this._borrowerRepository.getAllBorrowerList();
 
-      const auditProps: IAudit = Audit.createAuditProperties(
-        input.name,
-        CRUD_ACTION.create,
-      );
-      const audit: Audit = Audit.create(auditProps).getValue();
-
-      const savedBorrower = Borrower.create({
-        name,
-        phoneNumber,
-        audit,
-      }).getValue();
-
-      const savedData = await this._borrowerRepository.save(savedBorrower);
-
-      if (!savedData) {
-        throw applicationError(
-          `Unable to create user profile with properties ${JSON.stringify(
-            input,
-          )}`,
-        );
-      }
-
-      const loanId = await this._loanService.addLoanDetail(
-        loanAmount,
-        totalInstalments,
-        savedData.id,
-      );
-
-      await this._instalmentScheduleService.addInstalmentSchedule(
-        loanAmount,
-        totalInstalments,
-        loanId,
-      );
-
-      return savedData;
+      return BorrowerParser.borrowerList(borrower);
     } catch (error) {
       this._logger.error(error.message, error);
       throw error;
     }
   }
 
-  async trackUserLoan(phoneNumber: string): Promise<ITrackUserLoan[]> {
+  async addNewBorrower(
+    input: IAddBorrowerInput,
+  ): Promise<INewBorrowerResponse> {
     try {
-      const borrower =
+      const {
+        name,
+        phoneNumber,
+        loanAmount,
+        totalInstalments,
+        remark,
+        proofLink,
+      } = input;
+
+      let borrower: Borrower =
+        await this._borrowerRepository.getBorrowerLoanDetails(phoneNumber);
+      let borrowerId = borrower.id;
+
+      if (!borrower) {
+        const auditProps: IAudit = Audit.createAuditProperties(
+          input.name,
+          CRUD_ACTION.create,
+        );
+        const audit: Audit = Audit.create(auditProps).getValue();
+
+        const savedBorrower = Borrower.create({
+          name,
+          phoneNumber,
+          audit,
+        }).getValue();
+
+        borrower = await this._borrowerRepository.save(savedBorrower);
+
+        if (!borrower) {
+          throw applicationError(
+            `Unable to create user profile with properties ${JSON.stringify(
+              input,
+            )}`,
+          );
+        }
+
+        borrowerId = borrower.id;
+      }
+
+      const loanId = await this._loanService.addLoanDetail(
+        loanAmount,
+        totalInstalments,
+        borrowerId,
+        remark,
+        proofLink,
+      );
+
+      await this._instalmentScheduleService.addInstalmentSchedule(
+        loanAmount,
+        totalInstalments,
+        loanId,
+        borrower.name,
+      );
+
+      const newBorrower = BorrowerParser.newBorrower(borrower);
+
+      return newBorrower;
+    } catch (error) {
+      this._logger.error(error.message, error);
+      throw error;
+    }
+  }
+
+  async trackUserLoan(phoneNumber: string): Promise<ITrackUserLoan> {
+    try {
+      const borrower: Borrower =
         await this._borrowerRepository.getBorrowerLoanDetails(phoneNumber);
 
       if (!borrower) {
         throw applicationError('Borrower not found');
       }
 
-      const loans: ICalculatedLoanDetails[] = borrower.loans.map((loan: Loan) =>
-        this._calculateLoanDetails(loan),
-      );
+      for (const loan of borrower.loans) {
+        await this._changeNotPaidInstalmentStatus(loan);
+      }
 
-      const userLoan: ITrackUserLoan[] = BorrowerParser.userLoanParser(loans);
+      const loan: ICalculatedLoanDetails = this._calculateLoanDetails(
+        borrower.loans,
+      );
+      const userLoan: ITrackUserLoan = BorrowerParser.userLoanParser(loan);
 
       return userLoan;
     } catch (error) {
@@ -100,103 +145,143 @@ export class BorrowerService implements IBorrowerService {
     }
   }
 
-  /**
-   * Helper method to calculate loan details.
-   */
-  private _calculateLoanDetails(loan: Loan): ICalculatedLoanDetails {
+  private _calculateLoanDetails(loans: Loan[]): ICalculatedLoanDetails {
     const currentDate = new Date();
 
-    const totalPaymentsMade: number = this._calculateTotalPayments(
-      loan.payments,
-    );
+    const totalPaymentsMade: string = this._calculateTotalPayments(loans);
     const pastInstalments: InstalmentSchedule[] = this._filterPastInstalments(
-      loan.instalmentSchedules,
+      loans,
       currentDate,
     );
-    const currentMonthInstalments: InstalmentSchedule[] =
-      this._filterCurrentMonthInstalments(
-        loan.instalmentSchedules,
-        currentDate,
-      );
+    const totalPastInstalment: string =
+      this._calculateTotalPastIntalment(pastInstalments);
+    const carryOverAmount: number =
+      Number(totalPaymentsMade) - Number(totalPastInstalment);
 
-    const totalAmountDue: number =
-      this._calculateTotalAmountDue(pastInstalments);
-    const carryOverAmount: number = totalPaymentsMade - totalAmountDue;
-    const currentMonthDue: number = this._calculateCurrentMonthDue(
-      currentMonthInstalments,
-      carryOverAmount,
+    const loanAmount: string = this._calculateTotalLoan(loans);
+
+    const outstandingAmount: string = this._calculateOutstandingLoan(loans);
+
+    const currentMonthDue = this._calculateCurrentMonthDue(loans);
+
+    const instalments: InstalmentSchedule[] = loans.flatMap(
+      (instalment) => instalment.instalmentSchedules,
     );
 
     return {
-      loanId: loan.id,
-      loanAmount: loan.loanAmount,
-      outstandingAmount: loan.outStandingAmount,
-      currentMonthDue: Math.max(currentMonthDue, 0),
+      loanAmount,
+      outstandingAmount,
+      currentMonthDue,
       carryOverAmount,
-      instalments: loan.instalmentSchedules,
+      instalments,
     };
   }
 
-  /**
-   * Helper method to calculate total payments made.
-   */
-  private _calculateTotalPayments(payments: Payment[]) {
-    return (
-      payments?.reduce(
-        (sum: number, payment: Payment) => sum + payment.paymentAmount,
-        0,
-      ) || 0
-    );
+  private _calculateTotalPayments(loans: Loan[]): string {
+    const { paid } = INSTALMENT_STATUS;
+
+    const amountPaid: number = loans
+      .flatMap((loan) => loan.instalmentSchedules)
+      .filter((instalment) => instalment.status === paid)
+      .reduce((sum, instalment) => sum + Number(instalment.amountDue), 0);
+
+    return amountPaid.toFixed(2);
   }
 
-  /**
-   * Helper method to filter past instalments.
-   */
-  private _filterPastInstalments(
+  private _calculateOutstandingLoan(loans: Loan[]): string {
+    const { pending, unpaid } = INSTALMENT_STATUS;
+
+    const amountPending: number = loans
+      .flatMap((loan) => loan.instalmentSchedules)
+      .filter((instalment) => instalment.status === pending)
+      .reduce((sum, instalment) => sum + Number(instalment.amountDue), 0);
+
+    const amountUnpaid: number = loans
+      .flatMap((loan) => loan.instalmentSchedules)
+      .filter((instalment) => instalment.status === unpaid)
+      .reduce((sum, instalment) => sum + Number(instalment.amountDue), 0);
+
+    return (amountPending + amountUnpaid).toFixed(2);
+  }
+
+  private _calculateTotalLoan(loans: Loan[]): string {
+    const totalLoan: number = loans
+      .flatMap((loan) => loan.instalmentSchedules)
+      .reduce((sum, instalment) => sum + Number(instalment.amountDue), 0);
+
+    return totalLoan.toFixed(2);
+  }
+
+  private _filterPastInstalments(loans: Loan[], currentDate: Date) {
+    return loans
+      .flatMap((loan) => loan.instalmentSchedules)
+      .filter(
+        (schedule: InstalmentSchedule) =>
+          new Date(schedule.dueDate) < currentDate,
+      );
+  }
+
+  private _calculateTotalPastIntalment(
     instalments: InstalmentSchedule[],
-    currentDate: Date,
-  ) {
-    return instalments.filter(
-      (schedule: InstalmentSchedule) => schedule.dueDate < currentDate,
-    );
+  ): string {
+    const data = instalments
+      .flatMap((schedule) => schedule)
+      .reduce((sum, schedule) => sum + Number(schedule.amountDue), 0);
+
+    return data.toFixed(2);
   }
 
-  /**
-   * Helper method to filter current month instalments.
-   */
-  private _filterCurrentMonthInstalments(
-    instalments: InstalmentSchedule[],
-    currentDate: Date,
-  ) {
-    return instalments.filter(
-      (schedule: InstalmentSchedule) =>
-        new Date(schedule.dueDate).getMonth() === currentDate.getMonth() &&
-        new Date(schedule.dueDate).getFullYear() === currentDate.getFullYear(),
-    );
-  }
-
-  /**
-   * Helper method to calculate the total amount due from past instalments.
-   */
-  private _calculateTotalAmountDue(instalments: InstalmentSchedule[]) {
-    return instalments.reduce(
-      (sum: number, schedule: InstalmentSchedule) => sum + schedule.amountDue,
-      0,
-    );
-  }
-
-  /**
-   * Helper method to calculate the current month's due amount.
-   */
-  private _calculateCurrentMonthDue(
-    currentMonthInstalments: InstalmentSchedule[],
-    carryOverAmount: number,
-  ) {
-    return (
-      currentMonthInstalments.reduce(
-        (sum: number, schedule: InstalmentSchedule) => sum + schedule.amountDue,
+  private _calculateCurrentMonthDue(loans: Loan[]) {
+    const currentMonthDue = loans
+      .flatMap((loan) => loan.instalmentSchedules)
+      .filter(
+        (schedule: InstalmentSchedule) =>
+          schedule.status === INSTALMENT_STATUS.pending,
+      )
+      .reduce(
+        (sum: number, schedule: InstalmentSchedule) =>
+          sum + Number(schedule.amountDue),
         0,
-      ) - carryOverAmount
-    );
+      );
+    return currentMonthDue.toFixed(2);
+  }
+
+  private async _changeNotPaidInstalmentStatus(loan: Loan): Promise<void> {
+    try {
+      const today = new Date();
+      const { pending, paid, unpaid } = INSTALMENT_STATUS;
+      const auditProps: IAudit = Audit.createAuditProperties(
+        AUDIT_BY_SYSTEM,
+        CRUD_ACTION.update,
+      );
+      const audit: Audit = Audit.create(auditProps).getValue();
+
+      for (const instalment of loan.instalmentSchedules) {
+        const dueDate = new Date(instalment.dueDate);
+        const status = instalment.status;
+        let instalmentUpdate = instalment;
+
+        const previousDueDate = new Date(dueDate);
+        previousDueDate.setMonth(dueDate.getMonth() - 1);
+
+        if (today >= previousDueDate && today < dueDate && status !== paid) {
+          instalmentUpdate = InstalmentSchedule.update(
+            { status: pending },
+            instalment,
+            audit,
+          );
+        } else if (today >= dueDate && status !== paid) {
+          instalmentUpdate = InstalmentSchedule.update(
+            { status: unpaid },
+            instalment,
+            audit,
+          );
+        }
+        await this._instalmentScheduleRepository.save(instalmentUpdate);
+      }
+    } catch (error) {
+      this._logger.error(error.message, error);
+      throw error;
+    }
   }
 }

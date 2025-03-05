@@ -27,7 +27,7 @@ export class LoanModel extends BaseModel {
 
   @Field()
   @Column({ type: 'varchar', length: 100 })
-  loanStartDate: Date;
+  loanStartDate: string;
 
   @Field()
   @Column({ type: 'varchar', length: 100 })

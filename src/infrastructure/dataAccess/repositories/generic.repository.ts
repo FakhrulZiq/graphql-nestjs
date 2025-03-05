@@ -103,10 +103,11 @@ export class GenericSqlRepository<TEntity, TModel>
     }
   }
 
-  async save(entity: TEntity): Promise<TModel> {
+  async save(entity: TEntity): Promise<TEntity> {
     try {
       const domainToModelMapper: TModel = this.mapper.toPersistence(entity);
-      return await this.repository.save(domainToModelMapper);
+      const item: TModel = await this.repository.save(domainToModelMapper);
+      return this.mapper.toDomain(item);
     } catch (error) {
       return throwApplicationError(
         HttpStatus.INTERNAL_SERVER_ERROR,

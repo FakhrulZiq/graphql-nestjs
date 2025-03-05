@@ -6,7 +6,7 @@ import { updateEntity } from 'src/utilities/utils';
 
 export class InstalmentSchedule extends Entity implements IInstalmentSchedule {
   instalmentNumber: number;
-  dueDate: Date;
+  dueDate: string;
   amountDue: number;
   status: string;
   loanId: string;
