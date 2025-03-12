@@ -7,6 +7,8 @@ export const TYPES = {
   IInstalmentScheduleService: 'IInstalmentScheduleService',
   ILoanRepository: 'ILoanRepository',
   ILoanService: 'ILoanService',
+  IPaymentRepository: 'IPaymentRepository',
+  IPaymentService: 'IPaymentService',
 };
 
 export const CRUD_ACTION = {

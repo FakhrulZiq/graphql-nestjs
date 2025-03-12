@@ -8,7 +8,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity({ name: 'BaseModel' })
 @ObjectType()
 export class BaseModel {
   @Field()

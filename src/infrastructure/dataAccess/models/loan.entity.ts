@@ -46,10 +46,6 @@ export class LoanModel extends BaseModel {
   @ManyToOne(() => BorrowerModel, (borrower) => borrower.loans, { eager: true })
   borrower?: BorrowerModel;
 
-  @Field(() => [PaymentModel], { nullable: true })
-  @OneToMany(() => PaymentModel, (payment) => payment.loan)
-  payments?: PaymentModel[];
-
   @Field(() => [InstalmentScheduleModel], { nullable: true })
   @OneToMany(() => InstalmentScheduleModel, (schedule) => schedule.loan)
   instalmentSchedules?: InstalmentScheduleModel[];

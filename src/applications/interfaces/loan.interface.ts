@@ -11,7 +11,6 @@ export interface ILoan {
   remark?: string;
   proofLink?: string;
   borrowerId: string;
-  payments?: Payment[];
   instalmentSchedules?: InstalmentSchedule[];
   audit: Audit;
 }

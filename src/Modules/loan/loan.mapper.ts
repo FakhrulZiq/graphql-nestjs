@@ -13,7 +13,6 @@ import { InstalmentSchedule } from '../InstalmentSchedule/InstalmentSchedule';
 @Injectable()
 export class LoanMapper implements IMapper<Loan, LoanModel> {
   constructor(
-    private readonly _paymentMapper: PaymentMapper,
     private readonly _instalmentSchedulesMapper: InstalmentScheduleMapper,
   ) {}
   toPersistence(entity: Loan): LoanModel {
@@ -26,7 +25,6 @@ export class LoanMapper implements IMapper<Loan, LoanModel> {
       remark,
       proofLink,
       borrowerId,
-      payments,
       instalmentSchedules,
       audit,
     } = entity;
@@ -39,14 +37,6 @@ export class LoanMapper implements IMapper<Loan, LoanModel> {
       auditModifiedBy,
       auditModifiedDateTime,
     } = audit;
-
-    let paymentModels: PaymentModel[];
-
-    if (payments?.length > 0) {
-      paymentModels = payments.map((payment) =>
-        this._paymentMapper.toPersistence(payment),
-      );
-    }
 
     let instalmentScheduleModels: InstalmentScheduleModel[];
 
@@ -66,7 +56,6 @@ export class LoanMapper implements IMapper<Loan, LoanModel> {
       remark,
       proofLink,
       borrowerId,
-      payments: paymentModels,
       instalmentSchedules: instalmentScheduleModels,
       auditCreatedBy,
       auditCreatedDateTime,
@@ -89,17 +78,8 @@ export class LoanMapper implements IMapper<Loan, LoanModel> {
       remark,
       proofLink,
       borrowerId,
-      payments,
       instalmentSchedules,
     } = model;
-
-    let paymentDetails: Payment[];
-
-    if (payments?.length > 0) {
-      paymentDetails = payments.map((payment) =>
-        this._paymentMapper.toDomain(payment),
-      );
-    }
 
     let instalmentScheduleDetails: InstalmentSchedule[];
 
@@ -120,7 +100,6 @@ export class LoanMapper implements IMapper<Loan, LoanModel> {
         remark,
         proofLink,
         borrowerId,
-        payments: paymentDetails,
         instalmentSchedules: instalmentScheduleDetails,
         audit: new AuditMapper().toDomain(model),
       },

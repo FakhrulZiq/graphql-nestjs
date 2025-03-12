@@ -5,20 +5,22 @@ import { Result } from 'src/domain/result';
 import { updateEntity } from 'src/utilities/utils';
 
 export class Payment extends Entity implements IPayment {
-  loanId: string;
+  instalmentId: string;
   paymentAmount: number;
   paymentDate: string;
   paymentMethod: string;
   paymentStatus: string;
+  transactionId: string
   audit: Audit;
 
   constructor(id: string, props: IPayment) {
     super(id);
-    this.loanId = props.loanId;
+    this.instalmentId = props.instalmentId;
     this.paymentAmount = props.paymentAmount;
     this.paymentDate = props.paymentDate;
     this.paymentMethod = props.paymentMethod;
     this.paymentStatus = props.paymentStatus;
+    this.transactionId = props.transactionId;
     this.audit = props.audit;
   }
 

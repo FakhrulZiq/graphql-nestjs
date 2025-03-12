@@ -8,7 +8,8 @@ import { Payment } from './payment';
 export class PaymentMapper implements IMapper<Payment, PaymentModel> {
   toPersistence(entity: Payment): PaymentModel {
     const {
-      loanId,
+      instalmentId,
+      transactionId,
       paymentAmount,
       paymentDate,
       paymentMethod,
@@ -27,7 +28,8 @@ export class PaymentMapper implements IMapper<Payment, PaymentModel> {
 
     const model: PaymentModel = {
       id: entity.id,
-      loanId,
+      instalmentId,
+      transactionId,
       paymentAmount,
       paymentDate,
       paymentMethod,
@@ -45,7 +47,8 @@ export class PaymentMapper implements IMapper<Payment, PaymentModel> {
   toDomain(model: PaymentModel): Payment {
     const {
       id,
-      loanId,
+      instalmentId,
+      transactionId,
       paymentAmount,
       paymentDate,
       paymentMethod,
@@ -54,7 +57,8 @@ export class PaymentMapper implements IMapper<Payment, PaymentModel> {
 
     return Payment.create(
       {
-        loanId,
+        instalmentId,
+        transactionId,
         paymentAmount,
         paymentDate,
         paymentMethod,

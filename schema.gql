@@ -10,12 +10,13 @@ type PaymentModel {
   auditModifiedBy: String
   auditDeletedDateTime: DateTime
   auditDeletedBy: String
-  loanId: String!
+  instalmentId: String!
   paymentAmount: Float!
   paymentDate: String!
   paymentMethod: String!
   paymentStatus: String!
-  loan: LoanModel!
+  transactionId: String!
+  instalment: InstalmentScheduleModel!
 }
 
 """
@@ -37,6 +38,7 @@ type InstalmentScheduleModel {
   amountDue: Float!
   status: String!
   loan: LoanModel!
+  payments: [PaymentModel!]
 }
 
 type LoanModel {
@@ -56,7 +58,6 @@ type LoanModel {
   remark: String!
   proofLink: String!
   borrower: BorrowerModel!
-  payments: [PaymentModel!]
   instalmentSchedules: [InstalmentScheduleModel!]
 }
 

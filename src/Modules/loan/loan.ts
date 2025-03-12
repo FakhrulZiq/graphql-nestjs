@@ -15,7 +15,6 @@ export class Loan extends Entity implements ILoan {
   remark?: string;
   proofLink?: string;
   borrowerId: string;
-  payments?: Payment[];
   instalmentSchedules?: InstalmentSchedule[];
   audit: Audit;
 
@@ -29,7 +28,6 @@ export class Loan extends Entity implements ILoan {
     this.remark = props.remark;
     this.proofLink = props.proofLink;
     this.borrowerId = props.borrowerId;
-    this.payments = props.payments;
     this.instalmentSchedules = props.instalmentSchedules;
     this.audit = props.audit;
   }
