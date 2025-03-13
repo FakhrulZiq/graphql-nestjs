@@ -3,12 +3,9 @@ import { IMapper } from 'src/applications/interfaces/mapper.interface';
 import { AuditMapper } from 'src/domain/audit/audit.mapper';
 import { InstalmentScheduleModel } from 'src/infrastructure/dataAccess/models/instalmentSchedule.entity';
 import { LoanModel } from 'src/infrastructure/dataAccess/models/Loan.entity';
-import { PaymentModel } from 'src/infrastructure/dataAccess/models/payment.entity';
+import { InstalmentSchedule } from '../InstalmentSchedule/InstalmentSchedule';
 import { InstalmentScheduleMapper } from '../InstalmentSchedule/InstalmentSchedule.mapper';
 import { Loan } from '../Loan/Loan';
-import { PaymentMapper } from '../payment/payment.mapper';
-import { Payment } from '../payment/payment';
-import { InstalmentSchedule } from '../InstalmentSchedule/InstalmentSchedule';
 
 @Injectable()
 export class LoanMapper implements IMapper<Loan, LoanModel> {

@@ -3,7 +3,6 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 import { BaseModel } from './base.entity';
 import { BorrowerModel } from './borrower.entity';
-import { PaymentModel } from './payment.entity';
 import { InstalmentScheduleModel } from './instalmentSchedule.entity';
 
 @Entity({ name: 'loan' })

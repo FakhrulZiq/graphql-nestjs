@@ -1,4 +1,5 @@
 import {
+  IBorrowerInstalment,
   IBorrowerList,
   ICalculatedLoanDetails,
   INewBorrowerResponse,
@@ -7,6 +8,7 @@ import {
 import { extractDateFromISOString } from 'src/utilities/utils';
 import { Borrower } from './borrower';
 import { Loan } from '../Loan/Loan';
+import { InstalmentSchedule } from '../InstalmentSchedule/InstalmentSchedule';
 
 export class BorrowerParser {
   static userLoanParser(loan: ICalculatedLoanDetails): ITrackUserLoan {
@@ -17,6 +19,7 @@ export class BorrowerParser {
       carryOverAmount: loan?.carryOverAmount,
       instalments: loan?.instalments
         ?.map((instalment) => ({
+          id: instalment.id,
           instalmentNumber: instalment.instalmentNumber,
           dueDate: extractDateFromISOString(instalment.dueDate),
           amountDue: instalment.amountDue,
@@ -34,6 +37,20 @@ export class BorrowerParser {
       id: borrower.id,
       name: borrower.name,
       phoneNumber: borrower.phoneNumber,
+    };
+  }
+
+  static borrowerInstalment(
+    instalment: InstalmentSchedule,
+    loan: Loan,
+    borrower: Borrower,
+  ): IBorrowerInstalment {
+    return {
+      instalmentId: instalment.id,
+      name: borrower.name,
+      phoneNumber: borrower.phoneNumber,
+      description: loan.remark,
+      amount: instalment.amountDue,
     };
   }
 

@@ -4,6 +4,9 @@ export interface IBorrowerService {
   addNewBorrower(input: IAddBorrowerInput): Promise<INewBorrowerResponse>;
   trackUserLoan(phoneNumber: string): Promise<ITrackUserLoan>;
   getBorrwerList(): Promise<IBorrowerList[]>;
+  getBorrowerByInstalmentScheduleId(
+    instalmentId: string,
+  ): Promise<IBorrowerInstalment>;
 }
 
 export interface IAddBorrowerInput {
@@ -32,6 +35,7 @@ export interface ICalculatedLoanDetails {
 }
 
 export interface IInstalmentSchedule {
+  id: string;
   instalmentNumber: number;
   dueDate: string;
   amountDue: number;
@@ -57,4 +61,12 @@ export interface IBorrowerList {
   name: string;
   phoneNumber: string;
   loans: ILoanList[];
+}
+
+export interface IBorrowerInstalment {
+  instalmentId: string;
+  name: string;
+  phoneNumber: string;
+  description: string;
+  amount: number;
 }

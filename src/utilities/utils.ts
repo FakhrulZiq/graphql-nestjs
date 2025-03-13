@@ -24,6 +24,6 @@ export const updateEntity = (
 };
 
 export const extractDateFromISOString = (ISODate: string): string => {
-  const [datePart] = ISODate.split(' ');
+  const [datePart] = ISODate.split('T');
   return datePart;
 };

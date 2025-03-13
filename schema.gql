@@ -75,6 +75,7 @@ type BorrowerModel {
 }
 
 type InstalmentDto {
+  id: String!
   instalmentNumber: Float!
   dueDate: String!
   amountDue: Float!

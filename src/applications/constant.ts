@@ -9,6 +9,7 @@ export const TYPES = {
   ILoanService: 'ILoanService',
   IPaymentRepository: 'IPaymentRepository',
   IPaymentService: 'IPaymentService',
+  IBillplzService: 'IBillplzService',
 };
 
 export const CRUD_ACTION = {

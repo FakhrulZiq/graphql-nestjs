@@ -29,11 +29,11 @@ export class BorrowerRepository
   async getAllBorrowerList(): Promise<Borrower[]> {
     try {
       const borrowers: BorrowerModel[] = await this.repository.find({
-        relations: ['loans', 'loans.instalmentSchedules', 'loans.payments'],
+        relations: ['loans', 'loans.instalmentSchedules'],
       });
 
       if (borrowers?.length === 0) {
-        return null;
+        return [];
       }
 
       return borrowers.map((borrower: BorrowerModel) =>
@@ -49,7 +49,7 @@ export class BorrowerRepository
     try {
       const borrower: BorrowerModel = await this.repository.findOne({
         where: { phoneNumber },
-        relations: ['loans', 'loans.instalmentSchedules', 'loans.payments'],
+        relations: ['loans', 'loans.instalmentSchedules'],
       });
 
       if (!borrower) {

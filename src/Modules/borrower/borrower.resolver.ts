@@ -7,7 +7,6 @@ import {
   INewBorrowerResponse,
   ITrackUserLoan,
 } from 'src/applications/interfaces/borrowerService.interface';
-import { ILoanService } from 'src/applications/interfaces/loanService.interface';
 import {
   AddBorrowerInput,
   TrackUserLoanInput,
@@ -16,15 +15,13 @@ import {
   BorrowerListResponseDto,
   NewBorrowerResponseDto,
   TrackUserLoanResponseDto,
-} from './Modules/borrower/dto/borrowerOutput.dto';
+} from './dto/borrowerOutput.dto';
 
 @Resolver()
-export class UoMeResolver {
+export class BorrowerResolver {
   constructor(
     @Inject(TYPES.IBorrowerService)
     private readonly _borrowerService: IBorrowerService,
-    @Inject(TYPES.ILoanService)
-    private readonly _loanService: ILoanService,
   ) {}
 
   @Query(() => [BorrowerListResponseDto])

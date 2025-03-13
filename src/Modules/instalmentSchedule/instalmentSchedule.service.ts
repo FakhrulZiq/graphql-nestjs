@@ -68,6 +68,7 @@ export class InstalmentScheduleService implements IInstalmentScheduleService {
           currentDate.getFullYear(),
           currentDate.getMonth() + monthOffset,
           10,
+          12,
         );
         dueDates.push(dueDate.toISOString());
         monthOffset++;

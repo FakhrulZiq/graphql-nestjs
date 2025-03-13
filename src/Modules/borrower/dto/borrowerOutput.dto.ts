@@ -3,6 +3,9 @@ import { Field, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 export class InstalmentDto {
   @Field()
+  id: string;
+
+  @Field()
   instalmentNumber: number;
 
   @Field()

@@ -9,6 +9,7 @@ import { IAudit } from 'src/applications/interfaces/audit.interface';
 import { IBorrowerRepository } from 'src/applications/interfaces/borrowerRepository.interface';
 import {
   IAddBorrowerInput,
+  IBorrowerInstalment,
   IBorrowerList,
   IBorrowerService,
   ICalculatedLoanDetails,
@@ -17,6 +18,7 @@ import {
 } from 'src/applications/interfaces/borrowerService.interface';
 import { IInstalmentScheduleRepository } from 'src/applications/interfaces/instalmentScheduleRepository.interface';
 import { IInstalmentScheduleService } from 'src/applications/interfaces/instalmentScheduleService.interface';
+import { ILoanRepository } from 'src/applications/interfaces/loanRepository.interface';
 import { ILoanService } from 'src/applications/interfaces/loanService.interface';
 import { Audit } from 'src/domain/audit/audit';
 import { IContextAwareLogger } from 'src/infrastructure/logger';
@@ -33,6 +35,8 @@ export class BorrowerService implements IBorrowerService {
     private readonly _borrowerRepository: IBorrowerRepository,
     @Inject(TYPES.IInstalmentScheduleRepository)
     private readonly _instalmentScheduleRepository: IInstalmentScheduleRepository,
+    @Inject(TYPES.ILoanRepository)
+    private readonly _loanRepository: ILoanRepository,
     @Inject(TYPES.IInstalmentScheduleService)
     private readonly _instalmentScheduleService: IInstalmentScheduleService,
     @Inject(TYPES.ILoanService)
@@ -66,9 +70,8 @@ export class BorrowerService implements IBorrowerService {
         proofLink,
       } = input;
 
-      let borrower: Borrower =
+      let borrower: Borrower | null =
         await this._borrowerRepository.getBorrowerLoanDetails(phoneNumber);
-      let borrowerId = borrower.id;
 
       if (!borrower) {
         const auditProps: IAudit = Audit.createAuditProperties(
@@ -92,9 +95,8 @@ export class BorrowerService implements IBorrowerService {
             )}`,
           );
         }
-
-        borrowerId = borrower.id;
       }
+      const borrowerId = borrower.id;
 
       const loanId = await this._loanService.addLoanDetail(
         loanAmount,
@@ -279,6 +281,30 @@ export class BorrowerService implements IBorrowerService {
         }
         await this._instalmentScheduleRepository.save(instalmentUpdate);
       }
+    } catch (error) {
+      this._logger.error(error.message, error);
+      throw error;
+    }
+  }
+
+  async getBorrowerByInstalmentScheduleId(
+    instalmentId: string,
+  ): Promise<IBorrowerInstalment> {
+    try {
+      const instalment: InstalmentSchedule =
+        await this._instalmentScheduleRepository.findOne({
+          where: { id: instalmentId },
+        });
+
+      const loan: Loan = await this._loanRepository.findOne({
+        where: { id: instalment.loanId },
+      });
+
+      const borrower: Borrower = await this._borrowerRepository.findOne({
+        where: { id: loan.borrowerId },
+      });
+
+      return BorrowerParser.borrowerInstalment(instalment, loan, borrower);
     } catch (error) {
       this._logger.error(error.message, error);
       throw error;

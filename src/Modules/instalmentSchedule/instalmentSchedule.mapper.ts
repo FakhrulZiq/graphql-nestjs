@@ -11,12 +11,17 @@ import { Payment } from '../payment/payment';
 export class InstalmentScheduleMapper
   implements IMapper<InstalmentSchedule, InstalmentScheduleModel>
 {
-  constructor(
-    private readonly _paymentMapper: PaymentMapper,
-  ) {}
+  constructor(private readonly _paymentMapper: PaymentMapper) {}
   toPersistence(entity: InstalmentSchedule): InstalmentScheduleModel {
-    const { instalmentNumber, amountDue, dueDate, status, loanId, payments, audit } =
-      entity;
+    const {
+      instalmentNumber,
+      amountDue,
+      dueDate,
+      status,
+      loanId,
+      payments,
+      audit,
+    } = entity;
 
     const {
       auditCreatedBy,
@@ -26,7 +31,6 @@ export class InstalmentScheduleMapper
       auditModifiedBy,
       auditModifiedDateTime,
     } = audit;
-
 
     let paymentModels: PaymentModel[];
 
@@ -64,7 +68,6 @@ export class InstalmentScheduleMapper
       payments,
       loanId,
     } = model;
-
 
     let paymentDetails: Payment[];
 
