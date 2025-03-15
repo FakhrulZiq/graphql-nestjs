@@ -1,73 +1,106 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# 🚀 Personal Loan Tracking System (GraphQL & NestJS)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A **NestJS GraphQL API** for managing personal loans, built with **TypeScript, PostgreSQL, and TypeORM**. This system allows **user onboarding, online payments via Billplz, manual payment receipt approval, and loan tracking**.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## ✨ Features
+- **GraphQL API** with Queries & Mutations
+- **User Onboarding & Authentication**
+- **Online Payment Integration (Billplz Payment Gateway)**
+- **Manual Payment Receipt Approval**
+- **Payment Tracking & Loan Management**
+- **Automated GraphQL Documentation using Magidoc**
+- **Database Integration with MySQL & TypeORM**
+- **Modular & Scalable Architecture**
+- **Environment Variables Support**
 
-## Description
+## 🛠 Tech Stack
+- **Backend:** NestJS, GraphQL, TypeScript
+- **Database:** PostgreSQL, TypeORM
+- **Authentication:** JWT, Passport
+- **Payment Gateway:** Billplz
+- **GraphQL Documentation:** Magidoc
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🚀 Getting Started
 
-## Installation
+### Prerequisites
+Make sure you have the following installed:
+- [Node.js](https://nodejs.org/) (v18+ recommended)
+- [PostgreSQL](https://www.postgresql.org/)
 
+### Installation
 ```bash
-$ npm install
+git clone https://github.com/FakhrulZiq/graphql-nestjs.git
+cd graphql-nestjs
+npm install
 ```
 
-## Running the app
+### Setup Environment Variables
+Create a `.env` file and add the following variables:
+```env
+MYSQL_HOST=.............
+MYSQL_PORT=.............
+MYSQL_USERNAME=.........
+MYSQL_PASSWORD=.........
+MYSQL_NAME=.............
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+BILLPLZ_COLLECTION_ID=.
+BILLPLZ_API_KEY=.......
+BILLPLZ_URL=...........
 ```
 
-## Test
-
+### Running the Application
 ```bash
-# unit tests
-$ npm run test
+# Start the development server
+npm run start:dev
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# Start the production server
+npm run start:prod
 ```
 
-## Support
+## 📌 Usage
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### GraphQL Playground
+Once the server is running, open GraphQL Playground at:
+```
+http://localhost:3000/graphql
+```
 
-## Stay in touch
+Example Query:
+```graphql
+query {
+  getUsers {
+    id
+    name
+    email
+  }
+}
+```
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Example Mutation:
+```graphql
+mutation {
+  createUser(input: { name: "John Doe", email: "john@example.com" }) {
+    id
+    name
+  }
+}
+```
 
-## License
+### 📖 GraphQL Documentation
+Magidoc automatically generates GraphQL API documentation. To view it, run the following command.
+```
+magidoc preview
+```
 
-Nest is [MIT licensed](LICENSE).
+## 🤝 Contributing
+Contributions are welcome! Please follow the guidelines:
+- Fork the repository
+- Create a new branch (`feature/your-feature`)
+- Commit your changes
+- Open a pull request
+
+## 📜 License
+This project is licensed under the **MIT License**.
+
+---
+
