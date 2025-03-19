@@ -1,4 +1,4 @@
-import { InstalmentSchedule } from 'src/Modules/InstalmentSchedule/InstalmentSchedule';
+import { InstalmentSchedule } from 'src/modules/InstalmentSchedule/InstalmentSchedule';
 
 export interface IBorrowerService {
   addNewBorrower(input: IAddBorrowerInput): Promise<INewBorrowerResponse>;

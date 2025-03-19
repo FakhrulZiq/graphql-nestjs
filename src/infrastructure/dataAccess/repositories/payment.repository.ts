@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TYPES } from 'src/applications/constant';
 import { IPaymentRepository } from 'src/applications/interfaces/paymentRepository.interface';
 import { IContextAwareLogger } from 'src/infrastructure/logger';
-import { Payment } from 'src/Modules/payment/payment';
+import { Payment } from 'src/modules/payment/payment';
 import { PaymentMapper } from 'src/modules/payment/payment.mapper';
 import { Repository } from 'typeorm';
 import { PaymentModel } from '../models/payment.entity';

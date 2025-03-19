@@ -1,6 +1,6 @@
 import { Audit } from 'src/domain/audit/audit';
-import { InstalmentSchedule } from 'src/Modules/InstalmentSchedule/InstalmentSchedule';
-import { Payment } from 'src/Modules/payment/payment';
+import { InstalmentSchedule } from 'src/modules/InstalmentSchedule/InstalmentSchedule';
+import { Payment } from 'src/modules/payment/payment';
 
 export interface ILoan {
   loanAmount: number;

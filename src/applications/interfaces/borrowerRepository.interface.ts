@@ -1,4 +1,4 @@
-import { Borrower } from 'src/Modules/borrower/borrower';
+import { Borrower } from 'src/modules/borrower/borrower';
 import { IGenericRepository } from './genricRepository.interface';
 import { BorrowerModel } from 'src/infrastructure/dataAccess/models/borrower.entity';
 

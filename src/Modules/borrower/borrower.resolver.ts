@@ -10,7 +10,7 @@ import {
 import {
   AddBorrowerInput,
   TrackUserLoanInput,
-} from 'src/Modules/borrower/dto/borrowerInput.dto';
+} from 'src/modules/borrower/dto/borrowerInput.dto';
 import {
   BorrowerListResponseDto,
   NewBorrowerResponseDto,

@@ -1,5 +1,5 @@
 import { InstalmentScheduleModel } from 'src/infrastructure/dataAccess/models/instalmentSchedule.entity';
-import { InstalmentSchedule } from 'src/Modules/instalmentSchedule/instalmentSchedule';
+import { InstalmentSchedule } from 'src/modules/InstalmentSchedule/InstalmentSchedule';
 import { IGenericRepository } from './genricRepository.interface';
 
 export interface IInstalmentScheduleRepository

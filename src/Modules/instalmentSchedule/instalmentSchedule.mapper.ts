@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { IMapper } from 'src/applications/interfaces/mapper.interface';
 import { AuditMapper } from 'src/domain/audit/audit.mapper';
 import { InstalmentScheduleModel } from 'src/infrastructure/dataAccess/models/InstalmentSchedule.entity';
-import { InstalmentSchedule } from '../InstalmentSchedule/InstalmentSchedule';
+import { InstalmentSchedule } from './InstalmentSchedule';
 import { PaymentMapper } from '../payment/payment.mapper';
 import { PaymentModel } from 'src/infrastructure/dataAccess/models/payment.entity';
 import { Payment } from '../payment/payment';

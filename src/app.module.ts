@@ -4,10 +4,10 @@ import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { DatabaseModule } from './infrastructure/dataAccess/database/database.module';
-import { BorrowerModule } from './Modules/borrower/borrower.module';
-import { PaymentModule } from './Modules/payment/payment.module';
-import { InstalmentScheduleModule } from './Modules/instalmentSchedule/instalmentSchedule.module';
-import { LoanModule } from './Modules/loan/loan.module';
+import { BorrowerModule } from './modules/borrower/borrower.module';
+import { PaymentModule } from './modules/payment/payment.module';
+import { InstalmentScheduleModule } from './modules/instalmentSchedule/instalmentSchedule.module';
+import { LoanModule } from './modules/loan/loan.module';
 
 @Module({
   imports: [

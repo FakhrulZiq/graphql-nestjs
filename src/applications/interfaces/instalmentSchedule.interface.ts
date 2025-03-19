@@ -1,5 +1,5 @@
 import { Audit } from 'src/domain/audit/audit';
-import { Payment } from 'src/Modules/payment/payment';
+import { Payment } from 'src/modules/payment/payment';
 
 export interface IInstalmentSchedule {
   instalmentNumber: number;

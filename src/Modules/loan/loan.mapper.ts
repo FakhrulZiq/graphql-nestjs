@@ -5,7 +5,7 @@ import { InstalmentScheduleModel } from 'src/infrastructure/dataAccess/models/in
 import { LoanModel } from 'src/infrastructure/dataAccess/models/Loan.entity';
 import { InstalmentSchedule } from '../InstalmentSchedule/InstalmentSchedule';
 import { InstalmentScheduleMapper } from '../InstalmentSchedule/InstalmentSchedule.mapper';
-import { Loan } from '../Loan/Loan';
+import { Loan } from './Loan';
 
 @Injectable()
 export class LoanMapper implements IMapper<Loan, LoanModel> {
