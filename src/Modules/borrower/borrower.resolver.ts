@@ -7,10 +7,7 @@ import {
   INewBorrowerResponse,
   ITrackUserLoan,
 } from 'src/applications/interfaces/borrowerService.interface';
-import {
-  AddBorrowerInput,
-  TrackUserLoanInput,
-} from 'src/modules/borrower/dto/borrowerInput.dto';
+import { AddBorrowerInput, TrackUserLoanInput } from './dto/borrowerInput.dto';
 import {
   BorrowerListResponseDto,
   NewBorrowerResponseDto,

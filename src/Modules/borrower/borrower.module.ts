@@ -4,7 +4,6 @@ import { TYPES } from 'src/applications/constant';
 import { BorrowerModel } from 'src/infrastructure/dataAccess/models/borrower.entity';
 import { InstalmentScheduleModel } from 'src/infrastructure/dataAccess/models/instalmentSchedule.entity';
 import { LoanModel } from 'src/infrastructure/dataAccess/models/loan.entity';
-import { PaymentModel } from 'src/infrastructure/dataAccess/models/payment.entity';
 import { BorrowerRepository } from 'src/infrastructure/dataAccess/repositories/borrower.repository';
 import { InstalmentScheduleRepository } from 'src/infrastructure/dataAccess/repositories/instalmentSchedule.repository';
 import { LoanRepository } from 'src/infrastructure/dataAccess/repositories/loan.repository';
@@ -24,7 +23,6 @@ import { BorrowerService } from './borrower.service';
       BorrowerModel,
       LoanModel,
       InstalmentScheduleModel,
-      PaymentModel,
     ]),
   ],
   providers: [

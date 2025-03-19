@@ -11,7 +11,11 @@ export interface ILoanService {
     remark: string,
     proofLink: string,
   ): Promise<string>;
-  getLoanList(): Promise<ILoanListResponse[]>;
+  updateLoanAfterPayment(
+    id: string,
+    status: string,
+    paidAmount: string,
+  ): Promise<void>;
 }
 
 export interface ILoanListResponse {

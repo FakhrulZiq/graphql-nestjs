@@ -1,20 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common';
 import {
+  AUDIT_BY_SYSTEM,
   CRUD_ACTION,
   INSTALMENT_STATUS,
   TYPES,
 } from 'src/applications/constant';
 import { IAudit } from 'src/applications/interfaces/audit.interface';
+import { IInstalmentSchedule } from 'src/applications/interfaces/InstalmentSchedule.interface';
+import { IInstalmentScheduleRepository } from 'src/applications/interfaces/instalmentScheduleRepository.interface';
 import {
   IInstalmentScheduleService,
   ITotalPayPerMonth,
 } from 'src/applications/interfaces/instalmentScheduleService.interface';
+import { ILoanService } from 'src/applications/interfaces/loanService.interface';
 import { Audit } from 'src/domain/audit/audit';
 import { IContextAwareLogger } from 'src/infrastructure/logger';
-import { InstalmentSchedule } from './instalmentSchedule';
-import { IInstalmentSchedule } from 'src/applications/interfaces/InstalmentSchedule.interface';
-import { IInstalmentScheduleRepository } from 'src/applications/interfaces/instalmentScheduleRepository.interface';
 import { applicationError } from 'src/utilities/exceptionInstance';
+import { InstalmentSchedule } from './instalmentSchedule';
 
 @Injectable()
 export class InstalmentScheduleService implements IInstalmentScheduleService {
@@ -23,6 +25,8 @@ export class InstalmentScheduleService implements IInstalmentScheduleService {
     private readonly _logger: IContextAwareLogger,
     @Inject(TYPES.IInstalmentScheduleRepository)
     private readonly _instalmentScheduleRepository: IInstalmentScheduleRepository,
+    @Inject(TYPES.ILoanService)
+    private readonly _loanService: ILoanService,
   ) {}
 
   private async _calculateInstallmentPerMonth(
@@ -138,6 +142,46 @@ export class InstalmentScheduleService implements IInstalmentScheduleService {
           )}`,
         );
       }
+    } catch (error) {
+      this._logger.error(error.message, error);
+      throw error;
+    }
+  }
+
+  async updateInstalmentAfterPayment(
+    id: string,
+    status: string,
+    paidAmount: string,
+  ): Promise<void> {
+    try {
+      const instalment: InstalmentSchedule =
+        await this._instalmentScheduleRepository.findOne({
+          where: { id },
+        });
+
+      if (!instalment) {
+        throw applicationError(`There no instalment id =${id}`);
+      }
+
+      await this._loanService.updateLoanAfterPayment(
+        instalment.loanId,
+        status,
+        paidAmount,
+      );
+
+      const auditProps: IAudit = Audit.createAuditProperties(
+        AUDIT_BY_SYSTEM,
+        CRUD_ACTION.update,
+      );
+      const audit: Audit = Audit.create(auditProps).getValue();
+
+      const instalmentUpdate = InstalmentSchedule.update(
+        { status },
+        instalment,
+        audit,
+      );
+
+      await this._instalmentScheduleRepository.save(instalmentUpdate);
     } catch (error) {
       this._logger.error(error.message, error);
       throw error;

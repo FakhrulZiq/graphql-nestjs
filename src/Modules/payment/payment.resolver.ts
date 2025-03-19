@@ -1,13 +1,13 @@
 import { Inject } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { TYPES } from 'src/applications/constant';
+import { IBillplzService } from 'src/infrastructure/billplz/interface/billplzService.interface';
 import {
   IPaymentList,
   IPaymentService,
 } from '../../applications/interfaces/paymentService.interface';
 import { BillStatusInput, CreateBillInput } from './dto/paymentInput.dto';
 import { Bill, PaymentListResponse } from './dto/paymentOuput.dto';
-import { IBillplzService } from 'src/infrastructure/billplz/interface/billplzService.interface';
 
 @Resolver()
 export class PaymentResolver {
@@ -40,7 +40,7 @@ export class PaymentResolver {
   }
 
   @Query(() => Bill)
-  async getBillStatus(@Args('input') input: BillStatusInput) {
+  async getBillStatus(@Args('billStatusInput') input: BillStatusInput) {
     const bill = await this._billplzService.getBillStatus(input.billId);
     return {
       id: bill.id,

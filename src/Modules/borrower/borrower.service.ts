@@ -296,6 +296,10 @@ export class BorrowerService implements IBorrowerService {
           where: { id: instalmentId },
         });
 
+      if (instalment.status === INSTALMENT_STATUS.paid) {
+        throw applicationError('This instalment has been paid');
+      }
+
       const loan: Loan = await this._loanRepository.findOne({
         where: { id: instalment.loanId },
       });
@@ -306,7 +310,7 @@ export class BorrowerService implements IBorrowerService {
 
       return BorrowerParser.borrowerInstalment(instalment, loan, borrower);
     } catch (error) {
-      this._logger.error(error.message, error);
+      this._logger.error(error.errorMessage || error.message, error);
       throw error;
     }
   }

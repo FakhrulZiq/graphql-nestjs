@@ -31,7 +31,7 @@ export class PaymentRepository
       const payments: PaymentModel[] = await this.repository.find();
 
       if (payments?.length === 0) {
-        return null;
+        return [];
       }
 
       return payments.map((payment: PaymentModel) =>

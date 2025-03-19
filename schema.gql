@@ -111,17 +111,39 @@ type BorrowerListResponseDto {
   loans: [LoanListDto!]!
 }
 
+type PaymentListResponse {
+  instalmentId: String!
+  date: String!
+  amount: Float!
+  method: String!
+  status: String!
+  transactionId: String!
+}
+
+type Bill {
+  id: String!
+  url: String!
+  status: String!
+}
+
 type Query {
   getBorrowerList: [BorrowerListResponseDto!]!
   trackUserLoan(trackUserLoanInput: TrackUserLoanInput!): TrackUserLoanResponseDto!
+  getPaymentList: [PaymentListResponse!]!
+  getBillStatus(billStatusInput: BillStatusInput!): Bill!
 }
 
 input TrackUserLoanInput {
   phoneNumber: String!
 }
 
+input BillStatusInput {
+  billId: String!
+}
+
 type Mutation {
   addBorrower(addBorrowerInput: AddBorrowerInput!): NewBorrowerResponseDto!
+  createBill(createBillInput: CreateBillInput!): Bill!
 }
 
 input AddBorrowerInput {
@@ -131,4 +153,10 @@ input AddBorrowerInput {
   totalInstalments: Float!
   remark: String!
   proofLink: String
+}
+
+input CreateBillInput {
+  instalmentId: String!
+  callbackUrl: String!
+  redirectUrl: String!
 }

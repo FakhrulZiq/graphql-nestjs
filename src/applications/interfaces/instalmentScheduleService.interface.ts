@@ -5,6 +5,11 @@ export interface IInstalmentScheduleService {
     loanId: string,
     name: string,
   ): Promise<void>;
+  updateInstalmentAfterPayment(
+    id: string,
+    status: string,
+    paidAmount: string,
+  ): Promise<void>;
 }
 
 export interface ITotalPayPerMonth {

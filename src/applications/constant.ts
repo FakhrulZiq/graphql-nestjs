@@ -21,7 +21,10 @@ export const CRUD_ACTION = {
 
 export const INSTALMENT_STATUS = {
   pending: 'pending',
+  pendingPayment: 'pending payment',
   paid: 'paid',
+  partiallyPaid: 'partially paid',
+  fullyPaid: 'fully paid',
   unpaid: 'unpaid',
   upcoming: 'upcoming',
 };

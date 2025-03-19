@@ -1,23 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common';
 import {
+  AUDIT_BY_SYSTEM,
   CRUD_ACTION,
   INSTALMENT_STATUS,
   TYPES,
 } from 'src/applications/constant';
 import { IAudit } from 'src/applications/interfaces/audit.interface';
+import { IBorrowerRepository } from 'src/applications/interfaces/borrowerRepository.interface';
 import { ILoanRepository } from 'src/applications/interfaces/LoanRepository.interface';
-import {
-  ILoanListResponse,
-  ILoanService,
-  ILoanWithBorrower,
-} from 'src/applications/interfaces/loanService.interface';
+import { ILoanService } from 'src/applications/interfaces/loanService.interface';
 import { Audit } from 'src/domain/audit/audit';
 import { IContextAwareLogger } from 'src/infrastructure/logger';
 import { applicationError } from 'src/utilities/exceptionInstance';
 import { Loan } from './Loan';
-import { LoanParser } from './loan.parser';
-import { Borrower } from '../borrower/borrower';
-import { IBorrowerRepository } from 'src/applications/interfaces/borrowerRepository.interface';
 
 @Injectable()
 export class LoanService implements ILoanService {
@@ -51,7 +46,7 @@ export class LoanService implements ILoanService {
         totalInstalments,
         outStandingAmount: loanAmount,
         loanStartDate: currentDate,
-        loanStatus: INSTALMENT_STATUS.pending,
+        loanStatus: INSTALMENT_STATUS.pendingPayment,
         remark,
         proofLink,
         borrowerId,
@@ -70,25 +65,45 @@ export class LoanService implements ILoanService {
     }
   }
 
-  async getLoanList(): Promise<ILoanListResponse[]> {
+  async updateLoanAfterPayment(
+    id: string,
+    status: string,
+    paidAmount: string,
+  ): Promise<void> {
     try {
-      const loans: Loan[] = await this._loanRepository.findAll();
-      const loanWithBorrowers: ILoanWithBorrower[] = await Promise.all(
-        loans.map(async (loan) => {
-          const borrower: Borrower =
-            await this._borrowerRepository.getBorrowerById(loan.borrowerId);
-          return {
-            ...loan,
-            borrower,
-          };
-        }),
-      );
-      const partsedLoan: ILoanListResponse[] =
-        LoanParser.loanParser(loanWithBorrowers);
+      const { paid, partiallyPaid, pendingPayment, fullyPaid } =
+        INSTALMENT_STATUS;
 
-      return partsedLoan;
+      const loan: Loan = await this._loanRepository.findOne({ where: { id } });
+
+      if (!loan) {
+        throw applicationError(`There no instalment id =${id}`);
+      }
+
+      const outStandingAmount =
+        loan.outStandingAmount - Number(paidAmount) / 100;
+
+      let loanStatus = status === paid ? partiallyPaid : pendingPayment;
+
+      if (outStandingAmount <= 0) {
+        loanStatus = fullyPaid;
+      }
+
+      const auditProps: IAudit = Audit.createAuditProperties(
+        AUDIT_BY_SYSTEM,
+        CRUD_ACTION.update,
+      );
+      const audit: Audit = Audit.create(auditProps).getValue();
+
+      const loanUpdate = Loan.update(
+        { loanStatus, outStandingAmount },
+        loan,
+        audit,
+      );
+
+      await this._loanRepository.save(loanUpdate);
     } catch (error) {
-      this._logger.error(error.message, error);
+      this._logger.error(error.errorMessage || error.message, error);
       throw error;
     }
   }
